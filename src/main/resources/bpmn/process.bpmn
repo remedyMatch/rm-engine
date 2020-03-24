@@ -68,7 +68,7 @@
       <bpmn:outgoing>SequenceFlow_0loeh0a</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1tjxi3y" sourceRef="anfrage_prozess_logistikart" targetRef="Task_100o7az" />
-    <bpmn:userTask id="anfrage_prozess_logistikart" name="Logistikart auswählen" camunda:candidateGroups="${lieferant)">
+    <bpmn:userTask id="anfrage_prozess_logistikart" name="Logistikart auswählen" camunda:candidateGroups="${lieferant}">
       <bpmn:incoming>SequenceFlow_1ittshu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1tjxi3y</bpmn:outgoing>
     </bpmn:userTask>
@@ -82,7 +82,9 @@
       <bpmn:outgoing>SequenceFlow_151wubo</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_00o7jn4</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_151wubo" name="nein" sourceRef="ExclusiveGateway_16ygzak" targetRef="IntermediateThrowEvent_09pycwo" />
+    <bpmn:sequenceFlow id="SequenceFlow_151wubo" name="nein" sourceRef="ExclusiveGateway_16ygzak" targetRef="IntermediateThrowEvent_09pycwo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!selbstAusliefern}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_00o7jn4" sourceRef="ExclusiveGateway_16ygzak" targetRef="Task_13alvtg" />
     <bpmn:endEvent id="EndEvent_0i864v2">
       <bpmn:incoming>SequenceFlow_07yzzyc</bpmn:incoming>
