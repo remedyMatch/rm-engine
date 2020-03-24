@@ -1,4 +1,4 @@
-package io.remedymatch.engine.api;
+package io.remedymatch.engine.api.prozess;
 
 import lombok.val;
 import org.camunda.bpm.engine.ProcessEngines;
@@ -20,6 +20,7 @@ public class ProzessController {
         val variables = Variables.createVariables();
         variables.putValue("institution", request.getInstitutionId());
         variables.putValue("anfrageId", request.getAnfrageId());
+        variables.putValue("prozessTyp", request.getTyp());
 
         val prozessInstanz = ProcessEngines.getDefaultProcessEngine().getRuntimeService().startProcessInstanceByKey(request.getProzessKey(), request.getAnfrageId(), variables);
         return ResponseEntity.ok(prozessInstanz.getProcessDefinitionId());

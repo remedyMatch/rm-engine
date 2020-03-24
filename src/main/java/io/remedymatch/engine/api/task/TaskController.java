@@ -1,9 +1,8 @@
-package io.remedymatch.engine.api;
+package io.remedymatch.engine.api.task;
 
 import lombok.val;
 import org.camunda.bpm.engine.ProcessEngines;
 import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.variable.Variables;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +19,21 @@ public class TaskController {
         if (tasks == null) {
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.ok(tasks.stream().map(task -> mapToDTO(task, institutionId)).collect(Collectors.toList()));
+        return ResponseEntity.ok(
+                tasks.stream()
+                        .map(task -> mapToDTO(
+                                task,
+                                institutionId,
+                                task.getTaskDefinitionKey(),
+                                ProcessEngines.getDefaultProcessEngine()
+                                        .getRuntimeService()
+                                        .getVariable(task.getProcessInstanceId(), "anfrageId").toString())).
+                        collect(Collectors.toList()));
     }
 
     @PostMapping("/{taskId}")
     public ResponseEntity<Void> taskAbschliessen(@PathVariable("taskId") String taskId, @RequestBody TaskAbschliessenRequest request) {
-        val variables = Variables.createVariables();
-        variables.putValue("antwort", request.isAngenommen());
-        ProcessEngines.getDefaultProcessEngine().getTaskService().complete(taskId, variables);
-
+        ProcessEngines.getDefaultProcessEngine().getTaskService().complete(taskId, request.getVariables());
         return ResponseEntity.ok().build();
     }
 
@@ -38,11 +43,14 @@ public class TaskController {
         if (task == null) {
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.ok(mapToDTO(task, institutionId));
+
+        val anfrageId = ProcessEngines.getDefaultProcessEngine().getRuntimeService().getVariable(task.getProcessInstanceId(), "anfrageId").toString();
+
+        return ResponseEntity.ok(mapToDTO(task, task.getTaskDefinitionKey(), institutionId, anfrageId));
     }
 
-    private TaskDTO mapToDTO(Task task, String institutionId) {
-        return TaskDTO.builder().institution(institutionId).processInstanceId(task.getProcessInstanceId()).taskId(task.getId()).build();
+    private TaskDTO mapToDTO(Task task, String taskKey, String institutionId, String anfrageId) {
+        return TaskDTO.builder().institution(institutionId).prozessInstanceId(task.getProcessInstanceId()).taskId(task.getId()).objektId(anfrageId).taskKey(taskKey).build();
     }
 
 }

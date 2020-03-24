@@ -1,4 +1,4 @@
-package io.remedymatch.engine.api;
+package io.remedymatch.engine.api.task;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,9 @@ import lombok.Data;
 public class TaskDTO {
 
     public String taskId;
-    public String processInstanceId;
+    public String prozessInstanceId;
     public String institution;
+    public String objektId;
+    public String taskKey;
 
 }
