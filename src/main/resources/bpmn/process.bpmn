@@ -86,11 +86,11 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!selbstAusliefern}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_00o7jn4" sourceRef="ExclusiveGateway_16ygzak" targetRef="Task_13alvtg" />
-    <bpmn:endEvent id="EndEvent_0i864v2">
+    <bpmn:endEvent id="EndEvent_0i864v2" name="Ware ausgeliefert">
       <bpmn:incoming>SequenceFlow_07yzzyc</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1rp4i6r" sourceRef="Task_13alvtg" targetRef="Task_141cf89" />
-    <bpmn:userTask id="Task_13alvtg" name="Auslieferung bestätigen">
+    <bpmn:userTask id="Task_13alvtg" name="Auslieferung bestätigen" camunda:candidateGroups="${lieferant}">
       <bpmn:incoming>SequenceFlow_00o7jn4</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1rp4i6r</bpmn:outgoing>
     </bpmn:userTask>
@@ -235,7 +235,7 @@
       <bpmndi:BPMNShape id="ExclusiveGateway_16ygzak_di" bpmnElement="ExclusiveGateway_16ygzak" isMarkerVisible="true">
         <dc:Bounds x="945" y="225" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="928" y="195" width="84" height="14" />
+          <dc:Bounds x="928" y="213" width="84" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_151wubo_di" bpmnElement="SequenceFlow_151wubo">
@@ -252,6 +252,9 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_0i864v2_di" bpmnElement="EndEvent_0i864v2">
         <dc:Bounds x="1342" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1317" y="435" width="86" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1rp4i6r_di" bpmnElement="SequenceFlow_1rp4i6r">
         <di:waypoint x="1130" y="410" />
