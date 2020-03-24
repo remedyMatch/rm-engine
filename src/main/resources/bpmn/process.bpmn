@@ -101,7 +101,7 @@
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:message id="Message_10lfe97" name="logistikStorniert" />
-  <bpmn:message id="Message_07783hy" name="logistikBestätigt" />
+  <bpmn:message id="Message_07783hy" name="logistikBestaetigt" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="anfrage_prozess">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="anfrage_prozess_start">
