@@ -24,10 +24,10 @@ public class TaskController {
                         .map(task -> mapToDTO(
                                 task,
                                 institutionId,
-                                task.getTaskDefinitionKey(),
                                 ProcessEngines.getDefaultProcessEngine()
                                         .getRuntimeService()
-                                        .getVariable(task.getProcessInstanceId(), "anfrageId").toString())).
+                                        .getVariable(task.getProcessInstanceId(), "anfrageId").toString(),
+                                task.getTaskDefinitionKey())).
                         collect(Collectors.toList()));
     }
 
@@ -46,10 +46,10 @@ public class TaskController {
 
         val anfrageId = ProcessEngines.getDefaultProcessEngine().getRuntimeService().getVariable(task.getProcessInstanceId(), "anfrageId").toString();
 
-        return ResponseEntity.ok(mapToDTO(task, task.getTaskDefinitionKey(), institutionId, anfrageId));
+        return ResponseEntity.ok(mapToDTO(task, institutionId, anfrageId, task.getTaskDefinitionKey()));
     }
 
-    private TaskDTO mapToDTO(Task task, String taskKey, String institutionId, String anfrageId) {
+    private TaskDTO mapToDTO(Task task, String institutionId, String anfrageId, String taskKey) {
         return TaskDTO.builder().institution(institutionId).prozessInstanceId(task.getProcessInstanceId()).taskId(task.getId()).objektId(anfrageId).taskKey(taskKey).build();
     }
 
