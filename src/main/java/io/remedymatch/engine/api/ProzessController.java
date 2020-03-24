@@ -9,14 +9,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/restapi/prozess")
 public class ProzessController {
 
     @PostMapping("/start")
-    public ResponseEntity<String> liefereTasksFuerInstitution(@RequestBody ProzessStartRequest request) {
+    public ResponseEntity<String> liefereTasksFuerInstitution(@RequestBody @Valid ProzessStartRequest request) {
         val variables = Variables.createVariables();
         variables.putValue("institution", request.getInstitutionId());
+        variables.putValue("anfrageId", request.getAnfrageId());
+
         val prozessInstanz = ProcessEngines.getDefaultProcessEngine().getRuntimeService().startProcessInstanceByKey(request.getProzessKey(), request.getAnfrageId(), variables);
         return ResponseEntity.ok(prozessInstanz.getProcessDefinitionId());
     }
