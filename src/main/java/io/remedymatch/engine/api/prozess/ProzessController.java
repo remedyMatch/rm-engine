@@ -16,7 +16,7 @@ import javax.validation.Valid;
 public class ProzessController {
 
     @PostMapping("/start")
-    public ResponseEntity<String> liefereTasksFuerInstitution(@RequestBody @Valid ProzessStartRequest request) {
+    public ResponseEntity<String> prozessStarten(@RequestBody @Valid ProzessStartRequest request) {
         val variables = Variables.createVariables();
         variables.putValue("institution", request.getInstitutionId());
         variables.putValue("anfrageId", request.getAnfrageId());
