@@ -23,6 +23,6 @@ public class ProzessController {
         variables.putValue("prozessTyp", request.getTyp());
 
         val prozessInstanz = ProcessEngines.getDefaultProcessEngine().getRuntimeService().startProcessInstanceByKey(request.getProzessKey(), request.getAnfrageId(), variables);
-        return ResponseEntity.ok(prozessInstanz.getProcessDefinitionId());
+        return ResponseEntity.ok(prozessInstanz.getProcessInstanceId());
     }
 }

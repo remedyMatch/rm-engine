@@ -24,9 +24,7 @@ public class TaskController {
                         .map(task -> mapToDTO(
                                 task,
                                 institutionId,
-                                ProcessEngines.getDefaultProcessEngine()
-                                        .getRuntimeService()
-                                        .getVariable(task.getProcessInstanceId(), "anfrageId").toString(),
+                                ladeObjektId(task),
                                 task.getTaskDefinitionKey(),
                                 task.getName())).
                         collect(Collectors.toList()));
@@ -44,10 +42,21 @@ public class TaskController {
         if (task == null) {
             return ResponseEntity.ok().build();
         }
+        return ResponseEntity.ok(mapToDTO(task, institutionId, ladeObjektId(task), task.getTaskDefinitionKey(), task.getName()));
+    }
 
-        val anfrageId = ProcessEngines.getDefaultProcessEngine().getRuntimeService().getVariable(task.getProcessInstanceId(), "anfrageId").toString();
+    private String ladeObjektId(Task task) {
+        String varKey;
 
-        return ResponseEntity.ok(mapToDTO(task, institutionId, anfrageId, task.getTaskDefinitionKey(), task.getName()));
+        if (task.getTaskDefinitionKey().equals("anfrage_prozess_beantworten")) {
+            varKey = "anfrageId";
+        } else if (task.getTaskDefinitionKey().equals("anfrage_prozess_empfang_bestaetigen")) {
+            varKey = "matchId";
+        } else {
+            varKey = "anfrageId";
+        }
+
+        return ProcessEngines.getDefaultProcessEngine().getRuntimeService().getVariable(task.getProcessInstanceId(), varKey).toString();
     }
 
     private TaskDTO mapToDTO(Task task, String institutionId, String anfrageId, String taskKey, String taskName) {
