@@ -46,25 +46,15 @@ public class TaskController {
     }
 
     private String ladeObjektId(Task task) {
-        String varKey;
-
-        if (task.getTaskDefinitionKey().equals("anfrage_prozess_beantworten")) {
-            varKey = "anfrageId";
-        } else if (task.getTaskDefinitionKey().equals("anfrage_prozess_empfang_bestaetigen")) {
-            varKey = "matchId";
-        } else {
-            varKey = "anfrageId";
-        }
-
-        return ProcessEngines.getDefaultProcessEngine().getRuntimeService().getVariable(task.getProcessInstanceId(), varKey).toString();
+        return ProcessEngines.getDefaultProcessEngine().getRuntimeService().getVariable(task.getProcessInstanceId(), "objektId").toString();
     }
 
-    private TaskDTO mapToDTO(Task task, String institutionId, String anfrageId, String taskKey, String taskName) {
+    private TaskDTO mapToDTO(Task task, String institutionId, String objektId, String taskKey, String taskName) {
         return TaskDTO.builder()
                 .institution(institutionId)
                 .prozessInstanceId(task.getProcessInstanceId())
                 .taskId(task.getId())
-                .objektId(anfrageId)
+                .objektId(objektId)
                 .taskKey(taskKey)
                 .taskName(taskName)
                 .build();

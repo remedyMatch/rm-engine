@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1i1qdxc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:process id="match_prozess" isExecutable="true" camunda:historyTimeToLive="10">
+    <bpmn:startEvent id="anfrage_prozess_start" name="Anfrage gematched">
+      <bpmn:outgoing>SequenceFlow_1b1oywa</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="match_prozess_annehmen" name="Match erstellen" camunda:type="external" camunda:topic="matchErstellen">
+      <bpmn:incoming>SequenceFlow_1b1oywa</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ittshu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="match_prozess_empfang_bestaetigen" name="Wareneingang bestätigen" camunda:candidateGroups="${empfaenger}">
+      <bpmn:incoming>SequenceFlow_1ittshu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qijd73</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1ittshu" sourceRef="match_prozess_annehmen" targetRef="match_prozess_empfang_bestaetigen" />
+    <bpmn:endEvent id="match_prozess_auslieferung_bestaetigt" name="Auslieferung bestätigt">
+      <bpmn:incoming>SequenceFlow_06l3vov</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0qijd73" sourceRef="match_prozess_empfang_bestaetigen" targetRef="match_prozess_wareneingang_verarbeiten" />
+    <bpmn:sequenceFlow id="SequenceFlow_06l3vov" sourceRef="match_prozess_wareneingang_verarbeiten" targetRef="match_prozess_auslieferung_bestaetigt" />
+    <bpmn:serviceTask id="match_prozess_wareneingang_verarbeiten" name="Wareneingang verarbeiten" camunda:type="external" camunda:topic="auslieferungBestaetigung">
+      <bpmn:incoming>SequenceFlow_0qijd73</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06l3vov</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="SubProcess_0jowdv1" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_0gmabmj" name="Stornierung erhalten">
+        <bpmn:outgoing>SequenceFlow_1y3uo9k</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_19g43ei" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1y3uo9k" sourceRef="StartEvent_0gmabmj" targetRef="EndEvent_077de68" />
+      <bpmn:endEvent id="EndEvent_077de68" name="Stornierung verarbeitet">
+        <bpmn:incoming>SequenceFlow_1y3uo9k</bpmn:incoming>
+        <bpmn:compensateEventDefinition />
+      </bpmn:endEvent>
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_11ytg7t" attachedToRef="match_prozess_annehmen">
+      <bpmn:compensateEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="match_prozess_stornierung_verarbeiten" name="Stornierung verarbeiten" isForCompensation="true" camunda:type="external" camunda:topic="matchStornierungVerarbeiten" />
+    <bpmn:sequenceFlow id="SequenceFlow_1b1oywa" sourceRef="anfrage_prozess_start" targetRef="match_prozess_annehmen" />
+    <bpmn:association id="Association_1i1i1oa" associationDirection="One" sourceRef="IntermediateThrowEvent_11ytg7t" targetRef="match_prozess_stornierung_verarbeiten" />
+  </bpmn:process>
+  <bpmn:message id="Message_10lfe97" name="logistikStorniert" />
+  <bpmn:message id="Message_07783hy" name="logistikBestaetigt" />
+  <bpmn:message id="Message_19g43ei" name="stornierungErhalten" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="match_prozess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="anfrage_prozess_start">
+        <dc:Bounds x="242" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="233" y="165" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1x9dpdz_di" bpmnElement="match_prozess_annehmen">
+        <dc:Bounds x="340" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1xbkb26_di" bpmnElement="match_prozess_empfang_bestaetigen">
+        <dc:Bounds x="500" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ittshu_di" bpmnElement="SequenceFlow_1ittshu">
+        <di:waypoint x="440" y="140" />
+        <di:waypoint x="500" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_02v020f_di" bpmnElement="match_prozess_auslieferung_bestaetigt">
+        <dc:Bounds x="822" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="809" y="165" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qijd73_di" bpmnElement="SequenceFlow_0qijd73">
+        <di:waypoint x="600" y="140" />
+        <di:waypoint x="650" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06l3vov_di" bpmnElement="SequenceFlow_06l3vov">
+        <di:waypoint x="750" y="140" />
+        <di:waypoint x="822" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1ckcz9o_di" bpmnElement="match_prozess_wareneingang_verarbeiten">
+        <dc:Bounds x="650" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_06mq1a9_di" bpmnElement="SubProcess_0jowdv1" isExpanded="true">
+        <dc:Bounds x="200" y="280" width="220" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0z07jze_di" bpmnElement="StartEvent_0gmabmj">
+        <dc:Bounds x="240" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="230" y="365" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1y3uo9k_di" bpmnElement="SequenceFlow_1y3uo9k">
+        <di:waypoint x="276" y="340" />
+        <di:waypoint x="332" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0btyd2v_di" bpmnElement="EndEvent_077de68">
+        <dc:Bounds x="332" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="322" y="365" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0qxynj9_di" bpmnElement="IntermediateThrowEvent_11ytg7t">
+        <dc:Bounds x="392" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1i1i1oa_di" bpmnElement="Association_1i1i1oa">
+        <di:waypoint x="410" y="198" />
+        <di:waypoint x="410" y="260" />
+        <di:waypoint x="500" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_059c30b_di" bpmnElement="match_prozess_stornierung_verarbeiten">
+        <dc:Bounds x="500" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1b1oywa_di" bpmnElement="SequenceFlow_1b1oywa">
+        <di:waypoint x="278" y="140" />
+        <di:waypoint x="340" y="140" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
