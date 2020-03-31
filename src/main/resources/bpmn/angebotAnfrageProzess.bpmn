@@ -5,7 +5,7 @@
       <bpmn:outgoing>SequenceFlow_0a5ooqu</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0a5ooqu" sourceRef="StartEvent_1" targetRef="angebot_anfrage_prozess_beantworten" />
-    <bpmn:userTask id="angebot_anfrage_prozess_beantworten" name="Angebot-Anfrage beantworten">
+    <bpmn:userTask id="angebot_anfrage_prozess_beantworten" name="Angebot-Anfrage beantworten" camunda:candidateGroups="${institution}">
       <bpmn:incoming>SequenceFlow_0a5ooqu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ga1wka</bpmn:outgoing>
     </bpmn:userTask>
