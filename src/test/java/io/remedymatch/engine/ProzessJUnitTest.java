@@ -7,10 +7,12 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 
+@SpringBootTest
 public class ProzessJUnitTest {
     @Rule
     @ClassRule
