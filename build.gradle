@@ -31,12 +31,14 @@ dependencies {
 
     testImplementation 'org.camunda.bpm.assert:camunda-bpm-assert:5.0.0'
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 
 
     testCompile 'org.assertj:assertj-core:3.15.0'
-
 }
+
 
 test {
     useJUnitPlatform()

@@ -4,19 +4,32 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 
-@SpringBootTest
+/*@RunWith(SpringRunner.class)
+@ActiveProfiles("test")
+@SpringBootTest(
+        properties = {
+                "camunda.bpm.generate-unique-process-engine-name=true",
+                "camunda.bpm.generate-unique-process-application-name=true",
+                "spring.datasource.generate-unique-name=true"
+        }
+) */
+
+
 public class ProzessJUnitTest {
     @Rule
-    @ClassRule
+    /*@ClassRule*/
     public ProcessEngineRule rule = new ProcessEngineRule();
+
+    /*@Autowired
+    ProcessEngine processEngine;
+
+     */
 
     @Before
     public void setup() {
