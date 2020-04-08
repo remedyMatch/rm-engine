@@ -18,7 +18,7 @@
       <bpmn:endEvent id="DonationOfferCancledByUserEndEvent" name="donation offer canceled by user">
         <bpmn:incoming>SequenceFlow_1qryaoy</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:startEvent id="DonationCanledStartEvent" name="donation&#10;canceled">
+      <bpmn:startEvent id="DonationCanledStartEvent" name="donation&#10;canceled by user">
         <bpmn:outgoing>SequenceFlow_0br5wnm</bpmn:outgoing>
         <bpmn:messageEventDefinition messageRef="Message_0vmpi40" />
       </bpmn:startEvent>
@@ -51,7 +51,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0ifltcr" sourceRef="CancleDonationOfferTask1" targetRef="DonationOfferCancledEndEvent" />
   </bpmn:process>
-  <bpmn:message id="Message_0vmpi40" name="angebot_anfrage_stornieren" />
+  <bpmn:message id="Message_0vmpi40" name="cancleByUser_msg" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="donation-offer-process">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="DonationOfferReceivedStartEvent">
@@ -98,7 +98,7 @@
       <bpmndi:BPMNShape id="StartEvent_1oj5yza_di" bpmnElement="DonationCanledStartEvent">
         <dc:Bounds x="187" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="185" y="375" width="44" height="27" />
+          <dc:Bounds x="165" y="375" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0tbzxr0_di" bpmnElement="CancleDonationOfferTask">
