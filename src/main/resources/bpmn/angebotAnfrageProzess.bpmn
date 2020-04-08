@@ -46,10 +46,10 @@
       <bpmn:incoming>SequenceFlow_03xphmp</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ifltcr</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="EndEvent_0txu0vj" name="Anfrage storniert">
+    <bpmn:endEvent id="AngebotStorniertEnde" name="Anfrage storniert">
       <bpmn:incoming>SequenceFlow_0ifltcr</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0ifltcr" sourceRef="angebot_anfrage_prozess_stornierung_verarbeiten" targetRef="EndEvent_0txu0vj" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ifltcr" sourceRef="angebot_anfrage_prozess_stornierung_verarbeiten" targetRef="AngebotStorniertEnde" />
   </bpmn:process>
   <bpmn:message id="Message_0vmpi40" name="angebot_anfrage_stornieren" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -131,7 +131,7 @@
       <bpmndi:BPMNShape id="ServiceTask_040pc06_di" bpmnElement="angebot_anfrage_prozess_stornierung_verarbeiten">
         <dc:Bounds x="550" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0txu0vj_di" bpmnElement="EndEvent_0txu0vj">
+      <bpmndi:BPMNShape id="EndEvent_0txu0vj_di" bpmnElement="AngebotStorniertEnde">
         <dc:Bounds x="732" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="709" y="255" width="82" height="14" />
