@@ -26,17 +26,17 @@ public class ProzessJUnitTest {
     @Test
     @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
     public void testHappyPath() {
-        ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("angebot_anfrage_prozess", withVariables("institution", "Camunda"));
+        ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("donation-offer-process", withVariables("institution", "Camunda"));
 
-        assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_beantworten");
+        assertThat(processInstance).isWaitingAt("AnswerDonationOfferTask");
         assertThat(task()).hasCandidateGroup("Camunda");
-        complete(task(), withVariables("angenommen", true));
+        complete(task(), withVariables("approved", true));
 
-        assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_match_prozess_starten").
-                externalTask().hasTopicName("angebotMatchProzessStarten");
+        assertThat(processInstance).isWaitingAt("StartMatchProcessTask").
+                externalTask().hasTopicName("StartMatchProcess");
         complete(externalTask());
 
-        assertThat(processInstance).isEnded().hasPassed("MatchProzessGestartetEndEvent");
+        assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
 
 
     }
@@ -44,21 +44,21 @@ public class ProzessJUnitTest {
 
     @Test
     @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
-    public void testAnfrageAbegelehnt() {
-        Map<String, Object> abgelehntMap = new HashMap<String, Object>();
-        abgelehntMap.put("angenommen", false);
+    public void testRejectOffer() {
+        Map<String, Object> notApprovedMap = new HashMap<String, Object>();
+        notApprovedMap.put("approved", false);
 
         ProcessInstance processInstance = runtimeService()
-                .createProcessInstanceByKey("angebot_anfrage_prozess")
-                .setVariables(abgelehntMap)
-                .startAfterActivity("angebot_anfrage_prozess_beantworten")
+                .createProcessInstanceByKey("donation-offer-process")
+                .setVariables(notApprovedMap)
+                .startAfterActivity("AnswerDonationOfferTask")
                 .execute();
 
-        assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_stornierung_verarbeiten").
-                externalTask().hasTopicName("angebotAnfrageAblehnen");
+        assertThat(processInstance).isWaitingAt("CancleDonationOfferTask1").
+                externalTask().hasTopicName("CancleDonationOffer");
         complete(externalTask());
 
-        assertThat(processInstance).isEnded().hasPassed("AngebotStorniertEnde");
+        assertThat(processInstance).isEnded().hasPassed("DonationOfferCancledEndEvent");
 
 
     }
