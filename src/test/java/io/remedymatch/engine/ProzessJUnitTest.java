@@ -5,31 +5,15 @@ import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 
-/*@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest(
-        properties = {
-                "camunda.bpm.generate-unique-process-engine-name=true",
-                "camunda.bpm.generate-unique-process-application-name=true",
-                "spring.datasource.generate-unique-name=true"
-        }
-) */
-
-
 public class ProzessJUnitTest {
     @Rule
-    /*@ClassRule*/
     public ProcessEngineRule rule = new ProcessEngineRule();
 
-    /*@Autowired
-    ProcessEngine processEngine;
-
-     */
 
     @Before
     public void setup() {
@@ -37,7 +21,7 @@ public class ProzessJUnitTest {
     }
 
     @Test
-    @Deployment(resources = "angebotAnfrageProzess.bpmn")
+    @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
     public void testHappyPath() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("angebot_anfrage_prozess");
 
