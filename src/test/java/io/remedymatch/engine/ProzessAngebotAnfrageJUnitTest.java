@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 
-public class ProzessJUnitTest {
+public class ProzessAngebotAnfrageJUnitTest {
     @Rule
     public ProcessEngineRule rule = new ProcessEngineRule();
 
@@ -37,8 +37,6 @@ public class ProzessJUnitTest {
         complete(externalTask());
 
         assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
-
-
     }
 
 
@@ -62,4 +60,25 @@ public class ProzessJUnitTest {
 
 
     }
+
+    @Test
+    @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
+    public void testCancleOffer() {
+        ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("donation-offer-process", withVariables("institution", "Camunda"));
+
+        runtimeService().createMessageCorrelation("cancleByUser_msg")
+                .setVariable("reason", "Mag nicht mehr.")
+                .processInstanceVariableEquals("institution", "Camunda")
+                .correlateWithResult().getProcessInstance();
+
+        assertThat(processInstance).isWaitingAt("CancleDonationOfferTask").
+                externalTask().hasTopicName("angebotAnfrageAblehnen");
+        complete(externalTask());
+
+        assertThat(processInstance).isEnded().hasPassed("DonationOfferCancledByUserEndEvent");
+
+
+    }
+
+
 }
