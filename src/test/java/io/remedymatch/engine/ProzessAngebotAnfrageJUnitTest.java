@@ -7,9 +7,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 
@@ -29,27 +26,44 @@ public class ProzessAngebotAnfrageJUnitTest {
     public void testHappyPath() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("angebot_anfrage_prozess", withVariables("institution", "Camunda"));
 
+        assertThat(processInstance).isWaitingAt("StartEvent_1");
+        execute(job());
+
         assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_beantworten");
         assertThat(task()).hasCandidateGroup("Camunda");
         complete(task(), withVariables("angenommen", true));
 
         assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_match_prozess_starten").
                 externalTask().hasTopicName("angebotMatchProzessStarten");
+        complete(externalTask(), withVariables("angebotmenge", 3));
+
+
+        assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
+    }
+
+    @Test
+    @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
+    public void testHappyPathMitAufgebrauchterAngebotsMenge() {
+        ProcessInstance processInstance = runtimeService()
+                .createProcessInstanceByKey("angebot_anfrage_prozess")
+                .setVariable("angebotmenge", 0)
+                .startAfterActivity("angebot_anfrage_prozess_match_prozess_starten")
+                .execute();
+
+        assertThat(processInstance).isWaitingAt("AnfragenSuchenUndLoeschenTask").
+                externalTask().hasTopicName("AnfragenSuchenUndLoeschen");
         complete(externalTask());
 
         assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
     }
 
-
     @Test
     @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
     public void testRejectOffer() {
-        Map<String, Object> notApprovedMap = new HashMap<String, Object>();
-        notApprovedMap.put("angenommen", false);
 
         ProcessInstance processInstance = runtimeService()
                 .createProcessInstanceByKey("angebot_anfrage_prozess")
-                .setVariables(notApprovedMap)
+                .setVariable("angenommen", false)
                 .startAfterActivity("angebot_anfrage_prozess_beantworten")
                 .execute();
 

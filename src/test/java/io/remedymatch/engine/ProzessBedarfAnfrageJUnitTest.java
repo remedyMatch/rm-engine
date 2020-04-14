@@ -7,9 +7,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.camunda.bpm.engine.test.assertions.bpmn.AbstractAssertions.init;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
 
@@ -29,12 +26,34 @@ public class ProzessBedarfAnfrageJUnitTest {
     public void testHappyPath() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("bedarf_anfrage_prozess", withVariables("institution", "Camunda"));
 
+        assertThat(processInstance).isWaitingAt("StartEvent_1");
+        execute(job());
+
         assertThat(processInstance).isWaitingAt("bedarf_anfrage_prozess_beantworten");
         assertThat(task()).hasCandidateGroup("Camunda");
         complete(task(), withVariables("angenommen", true));
 
         assertThat(processInstance).isWaitingAt("bedarf_anfrage_prozess_match_prozess_starten").
                 externalTask().hasTopicName("bedarfMatchProzessStarten");
+
+
+        complete(externalTask(), withVariables("bedarfsmenge", 3));
+
+        assertThat(processInstance).isEnded().hasPassed("EndEvent_1m3wuzk");
+    }
+
+    @Test
+    @Deployment(resources = "bpmn/bedarfAnfrageProzess.bpmn")
+    public void testHappyPathMitGedecktemBedarf() {
+
+        ProcessInstance processInstance = runtimeService()
+                .createProcessInstanceByKey("bedarf_anfrage_prozess")
+                .setVariable("bedarfsmenge", 0)
+                .startAfterActivity("bedarf_anfrage_prozess_match_prozess_starten")
+                .execute();
+
+        assertThat(processInstance).isWaitingAt("AnfrageProzesseSuchenUndBeendenTask").
+                externalTask().hasTopicName("AnfrageProzesseSuchenundBeenden");
         complete(externalTask());
 
         assertThat(processInstance).isEnded().hasPassed("EndEvent_1m3wuzk");
@@ -44,12 +63,10 @@ public class ProzessBedarfAnfrageJUnitTest {
     @Test
     @Deployment(resources = "bpmn/bedarfAnfrageProzess.bpmn")
     public void testRejectOffer() {
-        Map<String, Object> notApprovedMap = new HashMap<String, Object>();
-        notApprovedMap.put("angenommen", false);
 
         ProcessInstance processInstance = runtimeService()
                 .createProcessInstanceByKey("bedarf_anfrage_prozess")
-                .setVariables(notApprovedMap)
+                .setVariable("angenommen", false)
                 .startAfterActivity("bedarf_anfrage_prozess_beantworten")
                 .execute();
 
@@ -71,6 +88,9 @@ public class ProzessBedarfAnfrageJUnitTest {
                 .setVariable("reason", "Mag nicht mehr.")
                 .processInstanceVariableEquals("institution", "Camunda")
                 .correlateWithResult().getProcessInstance();
+
+        assertThat(processInstance).isWaitingAt("StartEvent_0xfsbi5");
+        execute(job());
 
         assertThat(processInstance).isWaitingAt("Task_1qi5jni").
                 externalTask().hasTopicName("bedarfAnfrageAblehnen");
