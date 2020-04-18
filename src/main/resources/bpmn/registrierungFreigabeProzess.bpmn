@@ -8,17 +8,37 @@
     <bpmn:userTask id="rm_registrierung_freigabe_userTask_freigabe" name="Registrierung freigeben">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="keycloakBenutzerId" label="Keycloak BenutzerId (ID)" type="string">
+          <camunda:formField id="keycloakUserId" label="Keycloak BenutzerId (ID)" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="username" label="Keycloak Benutzername (Username)" type="string">
+          <camunda:formField id="keycloakGruppe" label="Keycloak Gruppe" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="createdAt" label="Keycloak ErstelltAm (CreatedAt)" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="keycloakStatus" label="Keycloak Status" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="institutionName" label="Institution Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="institutionTyp" label="Institution Typ" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="username" label="Keycloak Benutzername (Username)" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" />
             </camunda:validation>
@@ -38,7 +58,7 @@
               <camunda:constraint name="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="telefonnummer" label="Telefonnummer" type="string">
+          <camunda:formField id="telefon" label="Telefonnummer" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" />
             </camunda:validation>
@@ -64,16 +84,6 @@
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="land" label="Land" type="string">
-            <camunda:validation>
-              <camunda:constraint name="readonly" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="institutionTyp" label="Institution Typ" type="string">
-            <camunda:validation>
-              <camunda:constraint name="readonly" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="status" label="Status" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" />
             </camunda:validation>
