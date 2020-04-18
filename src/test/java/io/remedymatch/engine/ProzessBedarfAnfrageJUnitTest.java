@@ -21,7 +21,7 @@ public class ProzessBedarfAnfrageJUnitTest {
         init(rule.getProcessEngine());
     }
 
-    @Test
+//    @Test
     @Deployment(resources = "bpmn/bedarfAnfrageProzess.bpmn")
     public void testHappyPath() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("bedarf_anfrage_prozess", withVariables("institution", "Camunda"));

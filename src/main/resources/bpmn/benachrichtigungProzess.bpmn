@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_19t7l5v" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:process id="rm_benachrichtigung" name="Benachrichtigung" isExecutable="true">
+    <bpmn:startEvent id="rm_benachrichtigung_start" name="Request erhalten">
+      <bpmn:outgoing>rm_benachrichtigung_SequenceFlow_0665u9q</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="rm_benachrichtigung_SequenceFlow_0665u9q" sourceRef="rm_benachrichtigung_start" targetRef="rm_benachrichtigung_externalTask_benachrichtigungSenden" />
+    <bpmn:serviceTask id="rm_benachrichtigung_externalTask_benachrichtigungSenden" name="Benachrichtigung senden" camunda:type="external" camunda:topic="rm_benachrichtigung_senden">
+      <bpmn:incoming>rm_benachrichtigung_SequenceFlow_0665u9q</bpmn:incoming>
+      <bpmn:outgoing>rm_benachrichtigung_SequenceFlow_0mad53h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="rm_benachrichtigung_end_benachrichtigungGeschickt" name="Benachrichtigung geschickt">
+      <bpmn:incoming>rm_benachrichtigung_SequenceFlow_0mad53h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="rm_benachrichtigung_SequenceFlow_0mad53h" sourceRef="rm_benachrichtigung_externalTask_benachrichtigungSenden" targetRef="rm_benachrichtigung_end_benachrichtigungGeschickt" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="rm_benachrichtigung">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="rm_benachrichtigung_start">
+        <dc:Bounds x="179" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="146" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0665u9q_di" bpmnElement="rm_benachrichtigung_SequenceFlow_0665u9q">
+        <di:waypoint x="215" y="121" />
+        <di:waypoint x="270" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0rdud1k_di" bpmnElement="rm_benachrichtigung_externalTask_benachrichtigungSenden">
+        <dc:Bounds x="270" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0td9j6l_di" bpmnElement="rm_benachrichtigung_end_benachrichtigungGeschickt">
+        <dc:Bounds x="422" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="398" y="146" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mad53h_di" bpmnElement="rm_benachrichtigung_SequenceFlow_0mad53h">
+        <di:waypoint x="370" y="121" />
+        <di:waypoint x="422" y="121" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

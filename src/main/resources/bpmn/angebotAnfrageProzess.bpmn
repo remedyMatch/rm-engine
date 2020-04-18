@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1l1bv1i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1l1bv1i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
   <bpmn:process id="angebot_anfrage_prozess" isExecutable="true" camunda:historyTimeToLive="10">
     <bpmn:startEvent id="StartEvent_1" name="Anfrag erhalten" camunda:asyncBefore="true">
       <bpmn:outgoing>SequenceFlow_0a5ooqu</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0a5ooqu" sourceRef="StartEvent_1" targetRef="angebot_anfrage_prozess_beantworten" />
     <bpmn:userTask id="angebot_anfrage_prozess_beantworten" name="Angebot-Anfrage beantworten" camunda:candidateGroups="${institution}">
+      <bpmn:extensionElements>
+        <camunda:executionListener expression="${benachrichtigungService.benachrichtigungSenden(execution, &#39;rm-angebot-anfrage-erhalten&#39;)}" event="start" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0a5ooqu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ga1wka</bpmn:outgoing>
     </bpmn:userTask>
