@@ -1,4 +1,5 @@
 spring:
+  profiles: dev
   datasource:
     url: jdbc:mysql://localhost:3306/engine?serverTimezone=UTC
     maxActive: 10

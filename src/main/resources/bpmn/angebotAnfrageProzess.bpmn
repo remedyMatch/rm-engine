@@ -1,207 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1l1bv1i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
   <bpmn:process id="angebot_anfrage_prozess" isExecutable="true" camunda:historyTimeToLive="10">
-    <bpmn:startEvent id="StartEvent_1" name="Anfrag erhalten" camunda:asyncBefore="true">
-      <bpmn:outgoing>SequenceFlow_0a5ooqu</bpmn:outgoing>
+    <bpmn:startEvent id="angebot_anfrage_prozess_StartEvent" name="Anfrage erhalten" camunda:asyncBefore="true">
+      <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_0a5ooqu</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0a5ooqu" sourceRef="StartEvent_1" targetRef="angebot_anfrage_prozess_beantworten" />
-    <bpmn:userTask id="angebot_anfrage_prozess_beantworten" name="Angebot-Anfrage beantworten" camunda:candidateGroups="${institution}">
+    <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_0a5ooqu" sourceRef="angebot_anfrage_prozess_StartEvent" targetRef="angebot_anfrage_prozess_beantworten" />
+    <bpmn:userTask id="angebot_anfrage_prozess_beantworten" name="Angebot Anfrage beantworten" camunda:candidateGroups="${institution}">
       <bpmn:extensionElements>
         <camunda:executionListener expression="${benachrichtigungService.benachrichtigungSenden(execution, &#39;rm-angebot-anfrage-erhalten&#39;)}" event="start" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0a5ooqu</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ga1wka</bpmn:outgoing>
+      <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_0a5ooqu</bpmn:incoming>
+      <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_0ga1wka</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0ga1wka" sourceRef="angebot_anfrage_prozess_beantworten" targetRef="ExclusiveGateway_0yz94k1" />
-    <bpmn:endEvent id="MatchProcessStartedEndEvent" name="Match-Prozess gestartet">
-      <bpmn:incoming>SequenceFlow_0knve0d</bpmn:incoming>
+    <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_0ga1wka" sourceRef="angebot_anfrage_prozess_beantworten" targetRef="angebot_anfrage_prozess_ExclusiveGateway_0yz94k1" />
+    <bpmn:endEvent id="angebot_anfrage_prozess_EndEvent_MatchProzessGestartet" name="Match-Prozess gestartet">
+      <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_1xdn0j6</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_11bsoks" sourceRef="angebot_anfrage_prozess_match_prozess_starten" targetRef="ExclusiveGateway_086ay0p" />
-    <bpmn:subProcess id="SubProcess_0h1ny74" triggeredByEvent="true">
-      <bpmn:endEvent id="EndEvent_0zwid5r">
-        <bpmn:incoming>SequenceFlow_1qryaoy</bpmn:incoming>
+    <bpmn:subProcess id="angebot_anfrage_prozess_SubProcess_0h1ny74" triggeredByEvent="true">
+      <bpmn:endEvent id="angebot_anfrage_prozess_EndEvent_AnfrageStorniert" name="Anfrage storniert">
+        <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_1qryaoy</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:startEvent id="StartEvent_0xfsbi5" name="Anfrage stornieren">
-        <bpmn:outgoing>SequenceFlow_0br5wnm</bpmn:outgoing>
+      <bpmn:startEvent id="angebot_anfrage_prozess_StartEvent_AnfrageStornieren" name="Anfrage stornieren">
+        <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_0br5wnm</bpmn:outgoing>
         <bpmn:messageEventDefinition messageRef="Message_0vmpi40" />
       </bpmn:startEvent>
-      <bpmn:serviceTask id="angebot_anfrage_prozess_stornierung" name="Stornierung verarbeiten" camunda:type="external" camunda:topic="angebotAnfrageAblehnen">
-        <bpmn:incoming>SequenceFlow_0br5wnm</bpmn:incoming>
-        <bpmn:outgoing>SequenceFlow_1qryaoy</bpmn:outgoing>
+      <bpmn:serviceTask id="angebot_anfrage_prozess_anfrage_stornieren" name="Anfrage stornieren" camunda:type="external" camunda:topic="angebot_anfrage_stornieren_topic">
+        <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_0br5wnm</bpmn:incoming>
+        <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_1qryaoy</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="SequenceFlow_0br5wnm" sourceRef="StartEvent_0xfsbi5" targetRef="angebot_anfrage_prozess_stornierung" />
-      <bpmn:sequenceFlow id="SequenceFlow_1qryaoy" sourceRef="angebot_anfrage_prozess_stornierung" targetRef="EndEvent_0zwid5r" />
+      <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_0br5wnm" sourceRef="angebot_anfrage_prozess_StartEvent_AnfrageStornieren" targetRef="angebot_anfrage_prozess_anfrage_stornieren" />
+      <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_1qryaoy" sourceRef="angebot_anfrage_prozess_anfrage_stornieren" targetRef="angebot_anfrage_prozess_EndEvent_AnfrageStorniert" />
     </bpmn:subProcess>
-    <bpmn:serviceTask id="angebot_anfrage_prozess_match_prozess_starten" name="Match Prozess starten" camunda:type="external" camunda:topic="angebotMatchProzessStarten">
-      <bpmn:incoming>SequenceFlow_0g86ak6</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_11bsoks</bpmn:outgoing>
+    <bpmn:serviceTask id="angebot_anfrage_prozess_match_prozess_starten" name="Match Prozess starten" camunda:type="external" camunda:topic="angebot_anfrage_match_prozess_starten_topic">
+      <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_0g86ak6</bpmn:incoming>
+      <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_1xdn0j6</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0yz94k1" name="Anfrage angenommen?" default="SequenceFlow_03xphmp">
-      <bpmn:incoming>SequenceFlow_0ga1wka</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0g86ak6</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_03xphmp</bpmn:outgoing>
+    <bpmn:exclusiveGateway id="angebot_anfrage_prozess_ExclusiveGateway_0yz94k1" name="Anfrage angenommen?" default="angebot_anfrage_prozess_SequenceFlow_03xphmp">
+      <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_0ga1wka</bpmn:incoming>
+      <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_0g86ak6</bpmn:outgoing>
+      <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_03xphmp</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0g86ak6" name="Ja" sourceRef="ExclusiveGateway_0yz94k1" targetRef="angebot_anfrage_prozess_match_prozess_starten">
+    <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_0g86ak6" name="Ja" sourceRef="angebot_anfrage_prozess_ExclusiveGateway_0yz94k1" targetRef="angebot_anfrage_prozess_match_prozess_starten">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${angenommen}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_03xphmp" name="Nein" sourceRef="ExclusiveGateway_0yz94k1" targetRef="angebot_anfrage_prozess_stornierung_verarbeiten" />
-    <bpmn:serviceTask id="angebot_anfrage_prozess_stornierung_verarbeiten" name="Stornierung verarbeiten" camunda:type="external" camunda:topic="angebotAnfrageAblehnen">
-      <bpmn:incoming>SequenceFlow_03xphmp</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ifltcr</bpmn:outgoing>
+    <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_03xphmp" name="Nein" sourceRef="angebot_anfrage_prozess_ExclusiveGateway_0yz94k1" targetRef="angebot_anfrage_prozess_anfrage_ablehnen" />
+    <bpmn:serviceTask id="angebot_anfrage_prozess_anfrage_ablehnen" name="Anfrage ablehnen" camunda:type="external" camunda:topic="angebot_anfrage_ablehnen_topic">
+      <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_03xphmp</bpmn:incoming>
+      <bpmn:outgoing>angebot_anfrage_prozess_SequenceFlow_0ifltcr</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="EndEvent_0txu0vj" name="Anfrage storniert">
-      <bpmn:incoming>SequenceFlow_0ifltcr</bpmn:incoming>
+    <bpmn:endEvent id="angebot_anfrage_prozess_EndEvent_AnfrageAbgelehnt" name="Anfrage abgelehnt">
+      <bpmn:incoming>angebot_anfrage_prozess_SequenceFlow_0ifltcr</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0ifltcr" sourceRef="angebot_anfrage_prozess_stornierung_verarbeiten" targetRef="EndEvent_0txu0vj" />
-    <bpmn:exclusiveGateway id="ExclusiveGateway_086ay0p" name="Angebot aufgebraucht?">
-      <bpmn:incoming>SequenceFlow_11bsoks</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_19mmlgy</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_1yqp0t4</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_19mmlgy" name="nein" sourceRef="ExclusiveGateway_086ay0p" targetRef="ExclusiveGateway_0pchqfx">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{angebotmenge &gt;0}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1yqp0t4" name="ja" sourceRef="ExclusiveGateway_086ay0p" targetRef="AnfragenSuchenUndLoeschenTask">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{angebotmenge &lt;= 0}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0pchqfx">
-      <bpmn:incoming>SequenceFlow_19mmlgy</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1xd8xw6</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0knve0d</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0knve0d" sourceRef="ExclusiveGateway_0pchqfx" targetRef="MatchProcessStartedEndEvent" />
-    <bpmn:sequenceFlow id="SequenceFlow_1xd8xw6" sourceRef="AnfragenSuchenUndLoeschenTask" targetRef="ExclusiveGateway_0pchqfx" />
-    <bpmn:serviceTask id="AnfragenSuchenUndLoeschenTask" name="Zugehörige Anfragen zum Angebot suchen und löschen" camunda:type="external" camunda:topic="AnfragenSuchenUndLoeschen">
-      <bpmn:incoming>SequenceFlow_1yqp0t4</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1xd8xw6</bpmn:outgoing>
-    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_0ifltcr" sourceRef="angebot_anfrage_prozess_anfrage_ablehnen" targetRef="angebot_anfrage_prozess_EndEvent_AnfrageAbgelehnt" />
+    <bpmn:sequenceFlow id="angebot_anfrage_prozess_SequenceFlow_1xdn0j6" sourceRef="angebot_anfrage_prozess_match_prozess_starten" targetRef="angebot_anfrage_prozess_EndEvent_MatchProzessGestartet" />
   </bpmn:process>
   <bpmn:message id="Message_0vmpi40" name="angebot_anfrage_stornieren" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="angebot_anfrage_prozess">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="angebot_anfrage_prozess_StartEvent">
         <dc:Bounds x="179" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="159" y="142" width="76" height="14" />
+          <dc:Bounds x="157" y="142" width="81" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0a5ooqu_di" bpmnElement="SequenceFlow_0a5ooqu">
+      <bpmndi:BPMNEdge id="SequenceFlow_0a5ooqu_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_0a5ooqu">
         <di:waypoint x="215" y="117" />
         <di:waypoint x="270" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_12ibwf1_di" bpmnElement="angebot_anfrage_prozess_beantworten">
         <dc:Bounds x="270" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ga1wka_di" bpmnElement="SequenceFlow_0ga1wka">
+      <bpmndi:BPMNEdge id="SequenceFlow_0ga1wka_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_0ga1wka">
         <di:waypoint x="370" y="117" />
         <di:waypoint x="425" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1m3wuzk_di" bpmnElement="MatchProcessStartedEndEvent">
-        <dc:Bounds x="992" y="99" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_1m3wuzk_di" bpmnElement="angebot_anfrage_prozess_EndEvent_MatchProzessGestartet">
+        <dc:Bounds x="722" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="973" y="142" width="74" height="27" />
+          <dc:Bounds x="703" y="142" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_11bsoks_di" bpmnElement="SequenceFlow_11bsoks">
-        <di:waypoint x="650" y="117" />
-        <di:waypoint x="695" y="117" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0br5wnm_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_0br5wnm">
+        <di:waypoint x="218" y="330" />
+        <di:waypoint x="270" y="330" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0br5wnm_di" bpmnElement="SequenceFlow_0br5wnm">
-        <di:waypoint x="223" y="500" />
-        <di:waypoint x="275" y="500" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_0zwid5r_di" bpmnElement="EndEvent_0zwid5r">
-        <dc:Bounds x="407" y="482" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1qryaoy_di" bpmnElement="SequenceFlow_1qryaoy">
-        <di:waypoint x="375" y="500" />
-        <di:waypoint x="407" y="500" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="StartEvent_1oj5yza_di" bpmnElement="StartEvent_0xfsbi5">
-        <dc:Bounds x="187" y="482" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_0zwid5r_di" bpmnElement="angebot_anfrage_prozess_EndEvent_AnfrageStorniert">
+        <dc:Bounds x="417" y="312" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="181" y="525" width="49" height="27" />
+          <dc:Bounds x="394" y="355" width="82" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0tbzxr0_di" bpmnElement="angebot_anfrage_prozess_stornierung">
-        <dc:Bounds x="275" y="460" width="100" height="80" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1qryaoy_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_1qryaoy">
+        <di:waypoint x="370" y="330" />
+        <di:waypoint x="417" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1oj5yza_di" bpmnElement="angebot_anfrage_prozess_StartEvent_AnfrageStornieren">
+        <dc:Bounds x="182" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="156" y="355" width="90" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="SubProcess_1y8s1s5_di" bpmnElement="SubProcess_0h1ny74" isExpanded="true">
-        <dc:Bounds x="165" y="410" width="310" height="180" />
+      <bpmndi:BPMNShape id="ServiceTask_0tbzxr0_di" bpmnElement="angebot_anfrage_prozess_anfrage_stornieren">
+        <dc:Bounds x="270" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1y8s1s5_di" bpmnElement="angebot_anfrage_prozess_SubProcess_0h1ny74" isExpanded="true">
+        <dc:Bounds x="145" y="270" width="340" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_046j4iq_di" bpmnElement="angebot_anfrage_prozess_match_prozess_starten">
         <dc:Bounds x="550" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0yz94k1_di" bpmnElement="ExclusiveGateway_0yz94k1" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0yz94k1_di" bpmnElement="angebot_anfrage_prozess_ExclusiveGateway_0yz94k1" isMarkerVisible="true">
         <dc:Bounds x="425" y="92" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="413" y="56" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0g86ak6_di" bpmnElement="SequenceFlow_0g86ak6">
+      <bpmndi:BPMNEdge id="SequenceFlow_0g86ak6_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_0g86ak6">
         <di:waypoint x="475" y="117" />
         <di:waypoint x="550" y="117" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="507" y="99" width="12" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_03xphmp_di" bpmnElement="SequenceFlow_03xphmp">
+      <bpmndi:BPMNEdge id="SequenceFlow_03xphmp_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_03xphmp">
         <di:waypoint x="450" y="142" />
-        <di:waypoint x="450" y="310" />
-        <di:waypoint x="550" y="310" />
+        <di:waypoint x="450" y="230" />
+        <di:waypoint x="550" y="230" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="454" y="227" width="23" height="14" />
+          <dc:Bounds x="454" y="183" width="23" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_040pc06_di" bpmnElement="angebot_anfrage_prozess_stornierung_verarbeiten">
-        <dc:Bounds x="550" y="270" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_040pc06_di" bpmnElement="angebot_anfrage_prozess_anfrage_ablehnen">
+        <dc:Bounds x="550" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0txu0vj_di" bpmnElement="EndEvent_0txu0vj">
-        <dc:Bounds x="992" y="292" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_0txu0vj_di" bpmnElement="angebot_anfrage_prozess_EndEvent_AnfrageAbgelehnt">
+        <dc:Bounds x="722" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="969" y="335" width="82" height="14" />
+          <dc:Bounds x="695" y="255" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ifltcr_di" bpmnElement="SequenceFlow_0ifltcr">
-        <di:waypoint x="650" y="310" />
-        <di:waypoint x="992" y="310" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0ifltcr_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_0ifltcr">
+        <di:waypoint x="650" y="230" />
+        <di:waypoint x="722" y="230" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_086ay0p_di" bpmnElement="ExclusiveGateway_086ay0p" isMarkerVisible="true">
-        <dc:Bounds x="695" y="92" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="684" y="54.5" width="71" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_19mmlgy_di" bpmnElement="SequenceFlow_19mmlgy">
-        <di:waypoint x="745" y="117" />
-        <di:waypoint x="885" y="117" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="805" y="99" width="21" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xdn0j6_di" bpmnElement="angebot_anfrage_prozess_SequenceFlow_1xdn0j6">
+        <di:waypoint x="650" y="117" />
+        <di:waypoint x="722" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1yqp0t4_di" bpmnElement="SequenceFlow_1yqp0t4">
-        <di:waypoint x="720" y="142" />
-        <di:waypoint x="720" y="220" />
-        <di:waypoint x="760" y="220" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="731" y="178" width="9" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0pchqfx_di" bpmnElement="ExclusiveGateway_0pchqfx" isMarkerVisible="true">
-        <dc:Bounds x="885" y="92" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0knve0d_di" bpmnElement="SequenceFlow_0knve0d">
-        <di:waypoint x="935" y="117" />
-        <di:waypoint x="992" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1xd8xw6_di" bpmnElement="SequenceFlow_1xd8xw6">
-        <di:waypoint x="860" y="220" />
-        <di:waypoint x="910" y="220" />
-        <di:waypoint x="910" y="142" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_00mhv59_di" bpmnElement="AnfragenSuchenUndLoeschenTask">
-        <dc:Bounds x="760" y="180" width="100" height="80" />
-      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
