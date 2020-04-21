@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1l1bv1i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1l1bv1i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.6.0">
   <bpmn:process id="bedarf_anfrage_prozess" isExecutable="true" camunda:historyTimeToLive="10">
     <bpmn:startEvent id="bedarf_anfrage_prozess_StartEvent" name="Anfrage erhalten" camunda:asyncBefore="true">
       <bpmn:outgoing>bedarf_anfrage_prozess_SequenceFlow_0a5ooqu</bpmn:outgoing>
@@ -47,7 +47,7 @@
     <bpmn:sequenceFlow id="bedarf_anfrage_prozess_SequenceFlow_06a4jz2" sourceRef="bedarf_anfrage_prozess_beantworten" targetRef="bedarf_anfrage_prozess_ExclusiveGateway_0yz94k1" />
     <bpmn:userTask id="bedarf_anfrage_prozess_beantworten" name="Bedarf Anfrage beantworten" camunda:candidateGroups="${institution}">
       <bpmn:extensionElements>
-        <camunda:executionListener expression="${benachrichtigungService.benachrichtigungSenden(execution, &#39;rm-bedarf-anfrage-erhalten&#39;)}" event="start" />
+        <camunda:taskListener class="io.remedymatch.engine.benachrichtigung.MessageServiceListener" event="create" />
       </bpmn:extensionElements>
       <bpmn:incoming>bedarf_anfrage_prozess_SequenceFlow_0a5ooqu</bpmn:incoming>
       <bpmn:outgoing>bedarf_anfrage_prozess_SequenceFlow_06a4jz2</bpmn:outgoing>

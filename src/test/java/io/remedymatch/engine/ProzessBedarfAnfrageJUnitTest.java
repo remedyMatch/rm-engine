@@ -21,8 +21,8 @@ public class ProzessBedarfAnfrageJUnitTest {
         init(rule.getProcessEngine());
     }
 
-//    @Test
-    @Deployment(resources = "bpmn/bedarfAnfrageProzess.bpmn")
+    @Test
+    @Deployment(resources = {"bpmn/bedarfAnfrageProzess.bpmn", "bpmn/benachrichtigungProzess.bpmn"})
     public void testHappyPath() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("bedarf_anfrage_prozess", withVariables("institution", "Camunda"));
 
@@ -42,7 +42,7 @@ public class ProzessBedarfAnfrageJUnitTest {
         assertThat(processInstance).isEnded().hasPassed("bedarf_anfrage_prozess_EndEvent_MatchProzessGestartet");
     }
 
-//    @Test
+    //    @Test
     @Deployment(resources = "bpmn/bedarfAnfrageProzess.bpmn")
     public void testHappyPathMitGedecktemBedarf() {
 

@@ -1,15 +1,6 @@
 package io.remedymatch.engine;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.AbstractAssertions.init;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.complete;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.execute;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.externalTask;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.job;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.runtimeService;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.task;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.withVariables;
-
+import io.remedymatch.engine.benachrichtigung.BenachrichtigungService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
@@ -19,7 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.remedymatch.engine.benachrichtigung.BenachrichtigungService;
+import static org.camunda.bpm.engine.test.assertions.bpmn.AbstractAssertions.init;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
 
 //@SpringBootTest(
 //		// ...other parameters...
@@ -43,86 +35,86 @@ public class ProzessAngebotAnfrageJUnitTest {
 //		init(rule.getProcessEngine());
 //	}
 
-	@Rule
-	public ProcessEngineRule rule = new ProcessEngineRule();
+    @Rule
+    public ProcessEngineRule rule = new ProcessEngineRule();
 //    
 //	@Autowired
 //	ProcessEngine processEngine;
 
-	@Autowired
-	private BenachrichtigungService benachrichtigungService;
+    @Autowired
+    private BenachrichtigungService benachrichtigungService;
 
-	@Before
-	public void setUp() {
-		init(rule.getProcessEngine());
+    @Before
+    public void setUp() {
+        init(rule.getProcessEngine());
 
-		Mocks.register("benachrichtigungService", benachrichtigungService);
-	}
+        Mocks.register("benachrichtigungService", benachrichtigungService);
+    }
 
-//	@Test
-	@Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
-	public void testHappyPath() {
-		ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("angebot_anfrage_prozess",
-				withVariables("institution", "Camunda"));
+    //	@Test
+    @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
+    public void testHappyPath() {
+        ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("angebot_anfrage_prozess",
+                withVariables("institution", "Camunda"));
 
-		assertThat(processInstance).isWaitingAt("StartEvent_1");
-		execute(job());
+        assertThat(processInstance).isWaitingAt("StartEvent_1");
+        execute(job());
 
-		assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_beantworten");
-		assertThat(task()).hasCandidateGroup("Camunda");
-		complete(task(), withVariables("angenommen", true));
+        assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_beantworten");
+        assertThat(task()).hasCandidateGroup("Camunda");
+        complete(task(), withVariables("angenommen", true));
 
-		assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_match_prozess_starten").externalTask()
-				.hasTopicName("angebotMatchProzessStarten");
-		complete(externalTask(), withVariables("angebotmenge", 3));
+        assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_match_prozess_starten").externalTask()
+                .hasTopicName("angebotMatchProzessStarten");
+        complete(externalTask(), withVariables("angebotmenge", 3));
 
-		assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
-	}
+        assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
+    }
 
-//	@Test
-//	@Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
-//	public void testHappyPathMitAufgebrauchterAngebotsMenge() {
-//		ProcessInstance processInstance = runtimeService().createProcessInstanceByKey("angebot_anfrage_prozess")
-//				.setVariable("angebotmenge", 0).startAfterActivity("angebot_anfrage_prozess_match_prozess_starten")
-//				.execute();
-//
-//		assertThat(processInstance).isWaitingAt("AnfragenSuchenUndLoeschenTask").externalTask()
-//				.hasTopicName("AnfragenSuchenUndLoeschen");
-//		complete(externalTask());
-//
-//		assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
-//	}
+    //@Test
+    @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
+    public void testHappyPathMitAufgebrauchterAngebotsMenge() {
+        ProcessInstance processInstance = runtimeService().createProcessInstanceByKey("angebot_anfrage_prozess")
+                .setVariable("angebotmenge", 0).startAfterActivity("angebot_anfrage_prozess_match_prozess_starten")
+                .execute();
 
-	@Test
-	@Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
-	public void testRejectOffer() {
+        assertThat(processInstance).isWaitingAt("AnfragenSuchenUndLoeschenTask").externalTask()
+                .hasTopicName("AnfragenSuchenUndLoeschen");
+        complete(externalTask());
 
-		ProcessInstance processInstance = runtimeService().createProcessInstanceByKey("angebot_anfrage_prozess")
-				.setVariable("angenommen", false).startAfterActivity("angebot_anfrage_prozess_beantworten").execute();
+        assertThat(processInstance).isEnded().hasPassed("MatchProcessStartedEndEvent");
+    }
 
-		assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_anfrage_ablehnen").externalTask()
-				.hasTopicName("angebot_anfrage_ablehnen_topic");
-		complete(externalTask());
+    @Test
+    @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
+    public void testRejectOffer() {
 
-		assertThat(processInstance).isEnded().hasPassed("angebot_anfrage_prozess_EndEvent_AnfrageAbgelehnt");
+        ProcessInstance processInstance = runtimeService().createProcessInstanceByKey("angebot_anfrage_prozess")
+                .setVariable("angenommen", false).startAfterActivity("angebot_anfrage_prozess_beantworten").execute();
 
-	}
+        assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_anfrage_ablehnen").externalTask()
+                .hasTopicName("angebot_anfrage_ablehnen_topic");
+        complete(externalTask());
 
-	@Test
-	@Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
-	public void testCancleOffer() {
-		ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("angebot_anfrage_prozess",
-				withVariables("institution", "Camunda"));
+        assertThat(processInstance).isEnded().hasPassed("angebot_anfrage_prozess_EndEvent_AnfrageAbgelehnt");
 
-		runtimeService().createMessageCorrelation("angebot_anfrage_stornieren").setVariable("reason", "Mag nicht mehr.")
-				.processInstanceVariableEquals("institution", "Camunda").correlateWithResult().getProcessInstance();
+    }
 
-		assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_anfrage_stornieren").externalTask()
-				.hasTopicName("angebot_anfrage_stornieren_topic");
-		complete(externalTask());
+    @Test
+    @Deployment(resources = "bpmn/angebotAnfrageProzess.bpmn")
+    public void testCancleOffer() {
+        ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("angebot_anfrage_prozess",
+                withVariables("institution", "Camunda"));
 
-		assertThat(processInstance).isEnded().hasPassed("angebot_anfrage_prozess_EndEvent_AnfrageStorniert");
+        runtimeService().createMessageCorrelation("angebot_anfrage_stornieren").setVariable("reason", "Mag nicht mehr.")
+                .processInstanceVariableEquals("institution", "Camunda").correlateWithResult().getProcessInstance();
 
-	}
+        assertThat(processInstance).isWaitingAt("angebot_anfrage_prozess_anfrage_stornieren").externalTask()
+                .hasTopicName("angebot_anfrage_stornieren_topic");
+        complete(externalTask());
+
+        assertThat(processInstance).isEnded().hasPassed("angebot_anfrage_prozess_EndEvent_AnfrageStorniert");
+
+    }
 
 }
