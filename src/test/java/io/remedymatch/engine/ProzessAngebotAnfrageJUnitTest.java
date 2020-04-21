@@ -20,16 +20,17 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.remedymatch.engine.benachrichtigung.BenachrichtigungService;
+import org.springframework.boot.test.context.SpringBootTest;
 
-//@SpringBootTest(
-//		// ...other parameters...
-//		properties = { "camunda.bpm.generate-unique-process-engine-name=true",
-//				// this is only needed if a SpringBootProcessApplication
-//				// is used for the test
-//				"camunda.bpm.generate-unique-process-application-name=true",
-//				"spring.datasource.generate-unique-name=true",
-//		// additional properties...
-//		})
+@SpringBootTest(
+		// ...other parameters...
+		properties = { "camunda.bpm.generate-unique-process-engine-name=true",
+				// this is only needed if a SpringBootProcessApplication
+				// is used for the test
+				"camunda.bpm.generate-unique-process-application-name=true",
+				"spring.datasource.generate-unique-name=true",
+		// additional properties...
+		})
 public class ProzessAngebotAnfrageJUnitTest {
 
 //	@Rule
