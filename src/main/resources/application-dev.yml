@@ -1,0 +1,26 @@
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/engine?serverTimezone=UTC
+    maxActive: 10
+    maxIdle: 5
+    minIdle: 2
+    initialSize: 5
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+  
+camunda:
+  bpm:
+    admin-user:
+      password: admin
+      id: admin
+    filter:
+      create: show all
+    history-level: ACTIVITY
+
+logging:
+  level:
+    root: INFO
+    io.remedymatch: DEBUG
