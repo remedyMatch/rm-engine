@@ -4,9 +4,12 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.variable.Variables;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-//@Component("BenachrichtigungService")
-//@Named
+import javax.inject.Named;
+
+@Component("BenachrichtigungService")
+@Named
 public class BenachrichtigungService {
 
     static final String BENACHRICHTIGUNG_PROCESS_KEY = "rm_benachrichtigung";

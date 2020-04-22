@@ -47,7 +47,7 @@
     <bpmn:sequenceFlow id="bedarf_anfrage_prozess_SequenceFlow_06a4jz2" sourceRef="bedarf_anfrage_prozess_beantworten" targetRef="bedarf_anfrage_prozess_ExclusiveGateway_0yz94k1" />
     <bpmn:userTask id="bedarf_anfrage_prozess_beantworten" name="Bedarf Anfrage beantworten" camunda:candidateGroups="${institution}">
       <bpmn:extensionElements>
-        <camunda:taskListener class="io.remedymatch.engine.benachrichtigung.MessageServiceListener" event="create" />
+        <camunda:taskListener delegateExpression="#{messageService}" event="create" />
       </bpmn:extensionElements>
       <bpmn:incoming>bedarf_anfrage_prozess_SequenceFlow_0a5ooqu</bpmn:incoming>
       <bpmn:outgoing>bedarf_anfrage_prozess_SequenceFlow_06a4jz2</bpmn:outgoing>

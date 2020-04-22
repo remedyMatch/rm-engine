@@ -1,8 +1,10 @@
 package io.remedymatch.engine;
 
+import io.remedymatch.engine.benachrichtigung.MessageServiceListener;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
+import org.camunda.bpm.engine.test.mock.Mocks;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +21,7 @@ public class ProzessBedarfAnfrageJUnitTest {
     @Before
     public void setup() {
         init(rule.getProcessEngine());
+        Mocks.register("messageService", new MessageServiceListener());
     }
 
     @Test
