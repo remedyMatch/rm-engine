@@ -12,4 +12,6 @@ RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
 COPY --from=build /home/gradle/src/build/resources/main/* /app/
 
+ENV SPRING_PROFILES_ACTIVE prod
+
 CMD ["java","-jar","/app/spring-boot-application.jar"]
