@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Named;
 
-@Component("BenachrichtigungService")
+@Component
 @Named
 public class BenachrichtigungService {
 
