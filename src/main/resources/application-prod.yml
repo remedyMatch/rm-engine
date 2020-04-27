@@ -18,7 +18,7 @@ camunda:
       id: admin
     filter:
       create: show all
-    history-level: ACTIVITY
+    history-level: FULL
 
 logging:
   level:
