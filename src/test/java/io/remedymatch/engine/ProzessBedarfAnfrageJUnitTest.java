@@ -8,10 +8,12 @@ import org.camunda.bpm.engine.test.mock.Mocks;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.AbstractAssertions.init;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
 
+@SpringBootTest
 public class ProzessBedarfAnfrageJUnitTest {
 
     @Rule

@@ -9,37 +9,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.AbstractAssertions.init;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
 
-//@SpringBootTest(
-//		// ...other parameters...
-//		properties = { "camunda.bpm.generate-unique-process-engine-name=true",
-//				// this is only needed if a SpringBootProcessApplication
-//				// is used for the test
-//				"camunda.bpm.generate-unique-process-application-name=true",
-//				"spring.datasource.generate-unique-name=true",
-//		// additional properties...
-//		})
+
+@SpringBootTest
 public class ProzessAngebotAnfrageJUnitTest {
-
-//	@Rule
-//	public ProcessEngineRule rule;
-
-//	@Rule
-//	public ProcessEngineRule rule = new ProcessEngineRule();
-
-//	@Before
-//	public void setup() {
-//		init(rule.getProcessEngine());
-//	}
 
     @Rule
     public ProcessEngineRule rule = new ProcessEngineRule();
-//    
-//	@Autowired
-//	ProcessEngine processEngine;
 
     @Autowired
     private BenachrichtigungService benachrichtigungService;

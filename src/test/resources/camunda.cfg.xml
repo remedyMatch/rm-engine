@@ -11,4 +11,6 @@
             <list></list>
         </property>
     </bean>
+
+    <bean id="anfrageIdLokalSetzenDelegate" class="io.remedymatch.engine.anfrage.AnfrageILokalSetzenDelegate"></bean>
 </beans>
