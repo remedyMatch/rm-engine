@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AnfrageIdLokalSetzenDelegate implements JavaDelegate {
 
-    public static final String VAR_ANFRAGE_ID = "angebot_anfrage_id";
+    public static final String VAR_ANFRAGE_ID = "anfrage_id";
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {

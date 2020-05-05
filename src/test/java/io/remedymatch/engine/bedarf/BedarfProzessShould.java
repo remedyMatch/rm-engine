@@ -1,4 +1,4 @@
-package io.remedymatch.engine.angebot;
+package io.remedymatch.engine.bedarf;
 
 import io.remedymatch.engine.anfrage.AnfrageIdImEventSubprozessSetzenDelegate;
 import io.remedymatch.engine.anfrage.AnfrageIdLokalSetzenDelegate;
@@ -12,34 +12,34 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 
-import static io.remedymatch.engine.angebot.AngebotProzessConstants.*;
+import static io.remedymatch.engine.bedarf.BedarfProzessConstants.*;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
 
 @SpringBootTest
-public class AngebotProzessShould extends AbstractProcessEngineRuleTest {
+public class BedarfProzessShould extends AbstractProcessEngineRuleTest {
 
     @Before
     public void setUp() {
         Mocks.register("anfrageIdLokalSetzenDelegate", new AnfrageIdLokalSetzenDelegate());
         Mocks.register("anfrageIdImEventSubprozessSetzenDelegate", new AnfrageIdImEventSubprozessSetzenDelegate());
-        Mocks.register("angebotIdImEventSubprozessSetzenDelegate", new AngebotIdImEventSubprozessSetzenDelegate());
+        Mocks.register("bedarfIdImEventSubprozessSetzenDelegate", new BedarfIdImEventSubprozessSetzenDelegate());
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void angebot_stornieren() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void bedarf_stornieren() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN);
-        assertThat(processInstance).isWaitingFor(MESSAGE_ANGEBOT_GESCHLOSSEN);
+        assertThat(processInstance).isWaitingFor(MESSAGE_BEDARF_GESCHLOSSEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANGEBOT_GESCHLOSSEN);
+        runtimeService().correlateMessage(MESSAGE_BEDARF_GESCHLOSSEN);
 
-        assertThat(processInstance).isWaitingAt(TASK_ANGEBOT_SCHLIESSEN_STORNIERUNG)
-                .externalTask().hasTopicName(TOPIC_ANGEBOT_SCHLIESSEN);
+        assertThat(processInstance).isWaitingAt(TASK_BEDARF_SCHLIESSEN_STORNIERUNG)
+                .externalTask().hasTopicName(TOPIC_BEDARF_SCHLIESSEN);
 
         complete(externalTask());
 
@@ -47,35 +47,35 @@ public class AngebotProzessShould extends AbstractProcessEngineRuleTest {
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void angebot_anzahl_erreicht() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void bedarf_anzahl_erreicht() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN);
 
         runtimeService().setVariable(processInstance.getId(), VAR_ANZAHL, BigDecimal.valueOf(0));
-        assertThat(processInstance).isWaitingAt(TASK_ANGEBOT_SCHLIESSEN_ANZAHL)
-                .externalTask().hasTopicName(TOPIC_ANGEBOT_SCHLIESSEN);
+        assertThat(processInstance).isWaitingAt(TASK_BEDARF_SCHLIESSEN_ANZAHL)
+                .externalTask().hasTopicName(TOPIC_BEDARF_SCHLIESSEN);
 
         complete(externalTask());
         assertThat(processInstance).isEnded();
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void angebot_anfrage_erhalten_und_angenommen() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void bedarf_anfrage_erhalten_und_angenommen() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY, BUSINESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN);
         assertThat(processInstance).isWaitingFor(MESSAGE_ANFRAGE_ERHALTEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN);
         runtimeService().createMessageCorrelation(MESSAGE_ANFRAGE_BEARBEITET).localVariableEquals(VAR_ANFRAGE_ID, "a23423432").setVariable(VAR_ANFRAGE_ANGENOMMEN, true).correlate();
 
@@ -91,17 +91,17 @@ public class AngebotProzessShould extends AbstractProcessEngineRuleTest {
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void angebot_anfrage_erhalten_und_abgelehnt() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void bedarf_anfrage_erhalten_und_abgelehnt() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY, BUSINESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN);
         assertThat(processInstance).isWaitingFor(MESSAGE_ANFRAGE_ERHALTEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN);
         runtimeService().createMessageCorrelation(MESSAGE_ANFRAGE_BEARBEITET).localVariableEquals(VAR_ANFRAGE_ID, "a23423432").setVariable(VAR_ANFRAGE_ANGENOMMEN, false).correlate();
 
@@ -113,12 +113,12 @@ public class AngebotProzessShould extends AbstractProcessEngineRuleTest {
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void angebot_aktualitaet_benachrichtigen() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void bedarf_aktualitaet_benachrichtigen() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN);
 
@@ -132,45 +132,45 @@ public class AngebotProzessShould extends AbstractProcessEngineRuleTest {
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void angebot_rest_veraendern_und_beenden() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void bedarf_rest_veraendern_und_beenden() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY, BUSINESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN)
-                .isWaitingFor(MESSAGE_REST_ANGEBOT_GEAENDERT);
+                .isWaitingFor(MESSAGE_REST_BEDARF_GEAENDERT);
 
-        runtimeService().correlateMessage(MESSAGE_REST_ANGEBOT_GEAENDERT, BUSINESS_KEY, withVariables(VAR_ANZAHL, 0));
+        runtimeService().correlateMessage(MESSAGE_REST_BEDARF_GEAENDERT, BUSINESS_KEY, withVariables(VAR_ANZAHL, 0));
 
-        assertThat(processInstance).isWaitingAt(TASK_ANGEBOT_SCHLIESSEN_ANZAHL)
-                .hasPassed(END_REST_ANGEBOT_GEAENDERT)
-                .externalTask().hasTopicName(TOPIC_ANGEBOT_SCHLIESSEN);
+        assertThat(processInstance).isWaitingAt(TASK_BEDARF_SCHLIESSEN_ANZAHL)
+                .hasPassed(END_REST_BEDARF_GEAENDERT)
+                .externalTask().hasTopicName(TOPIC_BEDARF_SCHLIESSEN);
 
         complete(externalTask());
         assertThat(processInstance).isEnded();
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void mehrere_angebot_anfrage_erhalten() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void mehrere_bedarf_anfrage_erhalten() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY, BUSINESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN);
         assertThat(processInstance).isWaitingFor(MESSAGE_ANFRAGE_ERHALTEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN).isWaitingFor(MESSAGE_ANFRAGE_BEARBEITET);
         runtimeService().createMessageCorrelation(MESSAGE_ANFRAGE_BEARBEITET).localVariableEquals(VAR_ANFRAGE_ID, "a23423432").setVariable(VAR_ANFRAGE_ANGENOMMEN, true).correlate();
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "b23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "b23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "c23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "c23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN);
 
         //
@@ -183,23 +183,23 @@ public class AngebotProzessShould extends AbstractProcessEngineRuleTest {
     }
 
     @Test
-    @Deployment(resources = "bpmn/angebotProzess.bpmn")
-    public void mehrere_angebot_anfrage_erhalten_und_zwei_stornieren() {
+    @Deployment(resources = "bpmn/bedarfProzess.bpmn")
+    public void mehrere_bedarf_anfrage_erhalten_und_zwei_stornieren() {
         ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROZESS_KEY, BUSINESS_KEY);
         assertThat(processInstance).isStarted();
 
-        execute(jobQuery().activityId(START_ANGEBOT_ERHALTEN).singleResult());
+        execute(jobQuery().activityId(START_BEDARF_ERHALTEN).singleResult());
 
         assertThat(processInstance).isWaitingAt(TASK_STORNIERUNG_ERHALTEN);
         assertThat(processInstance).isWaitingFor(MESSAGE_ANFRAGE_ERHALTEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "a23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "b23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "b23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN);
 
-        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "c23423432", VAR_ANFRAGE_ANGEBOT_ID, "464356345645"));
+        runtimeService().correlateMessage(MESSAGE_ANFRAGE_ERHALTEN, BUSINESS_KEY, withVariables(VAR_ANFRAGE_ID, "c23423432", VAR_ANFRAGE_BEDARF_ID, "464356345645"));
         assertThat(processInstance).isWaitingAt(TASK_ANFRAGE_BEARBEITEN);
 
 

@@ -42,5 +42,7 @@ public class AngebotProzessConstants {
 
     public static final String VAR_ANZAHL = "angebot_anzahl";
     public static final String VAR_ANFRAGE_ANGENOMMEN = "anfrage_angenommen";
-    public static final String VAR_ANFRAGE_ID = "angebot_anfrage_id";
+    public static final String VAR_ANFRAGE_ID = "anfrage_id";
+    public static final String VAR_ANFRAGE_ANGEBOT_ID = "anfrage_bedarf_id";
+
 }
