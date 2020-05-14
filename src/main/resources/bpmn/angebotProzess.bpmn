@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1umk4zk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:process id="angebot_prozess" isExecutable="true">
+    <bpmn:startEvent id="angebot_prozess_angebot_erhalten" name="Angebot eingestellt" camunda:asyncBefore="true">
+      <bpmn:outgoing>SequenceFlow_0hpoaxv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0hpoaxv" sourceRef="angebot_prozess_angebot_erhalten" targetRef="angebot_prozess_stornierung_erhalten" />
+    <bpmn:receiveTask id="angebot_prozess_stornierung_erhalten" name="Angebot geschlossen" messageRef="Message_102d1u1">
+      <bpmn:incoming>SequenceFlow_0hpoaxv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0rquoh0</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0rquoh0" sourceRef="angebot_prozess_stornierung_erhalten" targetRef="angebot_prozess_angebot_schliessen_stornierung" />
+    <bpmn:boundaryEvent id="angebot_prozess_anzahl_erreicht" name="Nichts mehr verfügbar" attachedToRef="angebot_prozess_stornierung_erhalten">
+      <bpmn:outgoing>SequenceFlow_0g8ye82</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition>
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">${angebot_anzahl == 0}</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0g8ye82" sourceRef="angebot_prozess_anzahl_erreicht" targetRef="angebot_prozess_angebot_schliessen_anzahl" />
+    <bpmn:serviceTask id="angebot_prozess_angebot_schliessen_anzahl" name="Angebot schließen" camunda:type="external" camunda:topic="angebot_schliessen_topic">
+      <bpmn:incoming>SequenceFlow_0g8ye82</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0mvip3p</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0mvip3p" sourceRef="angebot_prozess_angebot_schliessen_anzahl" targetRef="angebot_prozess_angebot_aufgebraucht" />
+    <bpmn:sequenceFlow id="SequenceFlow_1xold6b" sourceRef="angebot_prozess_angebot_schliessen_stornierung" targetRef="angebot_prozess_angebot_storniert" />
+    <bpmn:serviceTask id="angebot_prozess_angebot_schliessen_stornierung" name="Angebot schließen" camunda:type="external" camunda:topic="angebot_schliessen_topic">
+      <bpmn:incoming>SequenceFlow_0rquoh0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1xold6b</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="angebot_anfrage_subprozess" name="Anfrage zu Angebot bearbeiten" triggeredByEvent="true">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${anfrageIdImEventSubprozessSetzenDelegate}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:exclusiveGateway id="ExclusiveGateway_0dqobim" name="Anfrage angenommen?">
+        <bpmn:incoming>SequenceFlow_1xwdnl7</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0xks8yd</bpmn:outgoing>
+        <bpmn:outgoing>SequenceFlow_0ixdgc9</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="angebot_prozess_anfrage_ablehnen" name="Anfrage ablehnen" camunda:type="external" camunda:topic="angebot_anfrage_ablehnen_topic">
+        <bpmn:incoming>SequenceFlow_0ixdgc9</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1brz4ir</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="angebot_prozess_match_anlegen" name="Match anlegen" camunda:type="external" camunda:topic="angebot_anfrage_match_anlegen_topic">
+        <bpmn:incoming>SequenceFlow_0xks8yd</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1y2vktc</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="angebot_prozess_logistikauftrag_erstellen" name="Logistikauftrag erstellen" camunda:type="external" camunda:topic="angebot_anfrage_logistik_erstellen_topic">
+        <bpmn:incoming>SequenceFlow_1y2vktc</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_08p15kn</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="angebot_prozess_anfrage_abgelehnt" name="Anfrage abgelehnt">
+        <bpmn:incoming>SequenceFlow_1brz4ir</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="angebot_prozess_logistikauftrag_erstellt" name="Logistikauftrag erstellt">
+        <bpmn:incoming>SequenceFlow_08p15kn</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1xwdnl7" sourceRef="angebot_prozess_anfrage_bearbeiten" targetRef="ExclusiveGateway_0dqobim" />
+      <bpmn:sequenceFlow id="SequenceFlow_0xks8yd" name="ja" sourceRef="ExclusiveGateway_0dqobim" targetRef="angebot_prozess_match_anlegen">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${anfrage_angenommen}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="SequenceFlow_0ixdgc9" name="nein" sourceRef="ExclusiveGateway_0dqobim" targetRef="angebot_prozess_anfrage_ablehnen">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!anfrage_angenommen}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="SequenceFlow_1brz4ir" sourceRef="angebot_prozess_anfrage_ablehnen" targetRef="angebot_prozess_anfrage_abgelehnt" />
+      <bpmn:sequenceFlow id="SequenceFlow_1y2vktc" sourceRef="angebot_prozess_match_anlegen" targetRef="angebot_prozess_logistikauftrag_erstellen" />
+      <bpmn:sequenceFlow id="SequenceFlow_08p15kn" sourceRef="angebot_prozess_logistikauftrag_erstellen" targetRef="angebot_prozess_logistikauftrag_erstellt" />
+      <bpmn:startEvent id="angebot_prozess_anfrage_erhalten" name="Anfrage erhalten" isInterrupting="false">
+        <bpmn:outgoing>SequenceFlow_003hwv5</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_1507awj" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_003hwv5" sourceRef="angebot_prozess_anfrage_erhalten" targetRef="angebot_prozess_anfrage_bearbeiten" />
+      <bpmn:sequenceFlow id="SequenceFlow_1acofs7" sourceRef="IntermediateThrowEvent_090015z" targetRef="angebot_prozess_anfrage_schliessen" />
+      <bpmn:serviceTask id="angebot_prozess_anfrage_schliessen" name="Anfrage schließen" camunda:type="external" camunda:topic="angebot_anfrage_schliessen_topic">
+        <bpmn:incoming>SequenceFlow_1acofs7</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0u2cwnp</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="angebot_prozess_ende_anfrage_geschlossen" name="Anfrage geschlossen">
+        <bpmn:incoming>SequenceFlow_0u2cwnp</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0u2cwnp" sourceRef="angebot_prozess_anfrage_schliessen" targetRef="angebot_prozess_ende_anfrage_geschlossen" />
+      <bpmn:boundaryEvent id="IntermediateThrowEvent_090015z" name="Angebot nicht mehr verfügbar" attachedToRef="angebot_prozess_anfrage_bearbeiten">
+        <bpmn:outgoing>SequenceFlow_1acofs7</bpmn:outgoing>
+        <bpmn:conditionalEventDefinition>
+          <bpmn:condition xsi:type="bpmn:tFormalExpression">${angebot_geschlossen}</bpmn:condition>
+        </bpmn:conditionalEventDefinition>
+      </bpmn:boundaryEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0bcogbi" sourceRef="IntermediateThrowEvent_1ife00p" targetRef="angebot_prozess_anfrage_stornieren" />
+      <bpmn:endEvent id="angebot_prozess_ende_anfrage_storniert" name="Anfrage storniert">
+        <bpmn:incoming>SequenceFlow_1je3ffw</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1je3ffw" sourceRef="angebot_prozess_anfrage_stornieren" targetRef="angebot_prozess_ende_anfrage_storniert" />
+      <bpmn:boundaryEvent id="IntermediateThrowEvent_1ife00p" name="Angebot&#10;storniert" attachedToRef="angebot_prozess_anfrage_bearbeiten">
+        <bpmn:outgoing>SequenceFlow_0bcogbi</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_0o5wnli" />
+      </bpmn:boundaryEvent>
+      <bpmn:serviceTask id="angebot_prozess_anfrage_stornieren" name="Anfrage stornieren" camunda:type="external" camunda:topic="angebot_anfrage_stornieren_topic">
+        <bpmn:incoming>SequenceFlow_0bcogbi</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1je3ffw</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:receiveTask id="angebot_prozess_anfrage_bearbeiten" name="Anfrage bearbeitet" messageRef="Message_00m7hsj">
+        <bpmn:extensionElements>
+          <camunda:executionListener delegateExpression="${anfrageIdLokalSetzenDelegate}" event="start" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_003hwv5</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1xwdnl7</bpmn:outgoing>
+      </bpmn:receiveTask>
+    </bpmn:subProcess>
+    <bpmn:endEvent id="angebot_prozess_angebot_aufgebraucht" name="Angebot aufgebraucht">
+      <bpmn:incoming>SequenceFlow_0mvip3p</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="angebot_prozess_angebot_storniert" name="Angebot geschlossen">
+      <bpmn:incoming>SequenceFlow_1xold6b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="SubProcess_0iqe81n" name="Rest-Angebot verändern" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_116jxdw" name="Rest-Angebot ändern" isInterrupting="false">
+        <bpmn:outgoing>SequenceFlow_0vz00s5</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_17iymqv" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0vz00s5" sourceRef="StartEvent_116jxdw" targetRef="angebot_prozess_ende_rest_geaendert" />
+      <bpmn:endEvent id="angebot_prozess_ende_rest_geaendert" name="Rest-Angebot geändert">
+        <bpmn:incoming>SequenceFlow_0vz00s5</bpmn:incoming>
+      </bpmn:endEvent>
+    </bpmn:subProcess>
+    <bpmn:subProcess id="SubProcess_0iswhsi" name="Über Aktualität benachrichtigen" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_0ez9dsm" name="2 Wochen" isInterrupting="false">
+        <bpmn:outgoing>SequenceFlow_0u3a2gl</bpmn:outgoing>
+        <bpmn:timerEventDefinition>
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2W</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0u3a2gl" sourceRef="StartEvent_0ez9dsm" targetRef="angebot_prozess_benachrichtigung_einstellen" />
+      <bpmn:endEvent id="angebot_prozess_ende_benachrichtigung_eingestellt" name="Benachrichtigung eingestellt">
+        <bpmn:incoming>SequenceFlow_0mkqzvi</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0mkqzvi" sourceRef="angebot_prozess_benachrichtigung_einstellen" targetRef="angebot_prozess_ende_benachrichtigung_eingestellt" />
+      <bpmn:serviceTask id="angebot_prozess_benachrichtigung_einstellen" name="Benachrichtung einstellen" camunda:type="external" camunda:topic="angebot_benachrichtung_einstellen_topic">
+        <bpmn:incoming>SequenceFlow_0u3a2gl</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0mkqzvi</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+    <bpmn:subProcess id="SubProcess_1xqjn7h" name="Angebot ungültig" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_0h4prhw" name="Angebot ungültig" isInterrupting="false">
+        <bpmn:outgoing>SequenceFlow_0ix6q3z</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_1798v51" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_12xueig" name="Angebot als ungültig markiert">
+        <bpmn:incoming>SequenceFlow_0ix6q3z</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0ix6q3z" sourceRef="StartEvent_0h4prhw" targetRef="EndEvent_12xueig" />
+      <bpmn:textAnnotation id="TextAnnotation_0c4eiu4">
+        <bpmn:text>Für Remedy-Match Admins</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_1achcc4" sourceRef="StartEvent_0h4prhw" targetRef="TextAnnotation_0c4eiu4" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:message id="Message_102d1u1" name="angebot_prozess_geschlossen_message" />
+  <bpmn:message id="Message_1507awj" name="angebot_prozess_anfrage_erhalten_message" />
+  <bpmn:message id="Message_17iymqv" name="angebot_prozess_rest_geaendert_message" />
+  <bpmn:message id="Message_1798v51" name="angebot_prozess_angebot_ungueltig_message" />
+  <bpmn:message id="Message_0o5wnli" name="angebot_prozess_anfrage_storniert_message" />
+  <bpmn:message id="Message_00m7hsj" name="angebot_prozess_anfrage_bearbeitet_message" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="angebot_prozess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="angebot_prozess_angebot_erhalten">
+        <dc:Bounds x="189" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="182" y="715" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hpoaxv_di" bpmnElement="SequenceFlow_0hpoaxv">
+        <di:waypoint x="225" y="690" />
+        <di:waypoint x="310" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_18w7yob_di" bpmnElement="angebot_prozess_stornierung_erhalten">
+        <dc:Bounds x="310" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0dqobim_di" bpmnElement="ExclusiveGateway_0dqobim" isMarkerVisible="true">
+        <dc:Bounds x="475" y="265" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="463" y="322" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xwdnl7_di" bpmnElement="SequenceFlow_1xwdnl7">
+        <di:waypoint x="396" y="290" />
+        <di:waypoint x="475" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xks8yd_di" bpmnElement="SequenceFlow_0xks8yd">
+        <di:waypoint x="525" y="290" />
+        <di:waypoint x="590" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="553" y="272" width="9" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ixdgc9_di" bpmnElement="SequenceFlow_0ixdgc9">
+        <di:waypoint x="500" y="265" />
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="590" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="517" y="210" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1ctx24z_di" bpmnElement="angebot_prozess_anfrage_ablehnen">
+        <dc:Bounds x="590" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1iivm04_di" bpmnElement="angebot_prozess_match_anlegen">
+        <dc:Bounds x="590" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1y2vktc_di" bpmnElement="SequenceFlow_1y2vktc">
+        <di:waypoint x="690" y="290" />
+        <di:waypoint x="760" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_03ncwcz_di" bpmnElement="angebot_prozess_logistikauftrag_erstellen">
+        <dc:Bounds x="760" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1vrw2c9_di" bpmnElement="angebot_prozess_anfrage_abgelehnt">
+        <dc:Bounds x="932" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="905" y="185" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1brz4ir_di" bpmnElement="SequenceFlow_1brz4ir">
+        <di:waypoint x="690" y="160" />
+        <di:waypoint x="932" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_12nl088_di" bpmnElement="angebot_prozess_logistikauftrag_erstellt">
+        <dc:Bounds x="932" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="914" y="315" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_08p15kn_di" bpmnElement="SequenceFlow_08p15kn">
+        <di:waypoint x="860" y="290" />
+        <di:waypoint x="932" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rquoh0_di" bpmnElement="SequenceFlow_0rquoh0">
+        <di:waypoint x="410" y="690" />
+        <di:waypoint x="460" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_03uu0e1_di" bpmnElement="angebot_prozess_anzahl_erreicht">
+        <dc:Bounds x="372" y="712" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="320" y="743" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g8ye82_di" bpmnElement="SequenceFlow_0g8ye82">
+        <di:waypoint x="390" y="748" />
+        <di:waypoint x="390" y="810" />
+        <di:waypoint x="460" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0gd693v_di" bpmnElement="angebot_prozess_angebot_schliessen_anzahl">
+        <dc:Bounds x="460" y="770" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mvip3p_di" bpmnElement="SequenceFlow_0mvip3p">
+        <di:waypoint x="560" y="810" />
+        <di:waypoint x="622" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xold6b_di" bpmnElement="SequenceFlow_1xold6b">
+        <di:waypoint x="560" y="690" />
+        <di:waypoint x="622" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0ov4k2m_di" bpmnElement="angebot_prozess_angebot_schliessen_stornierung">
+        <dc:Bounds x="460" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0idotlt_di" bpmnElement="angebot_anfrage_subprozess" isExpanded="true">
+        <dc:Bounds x="150" y="80" width="890" height="530" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_127pcw0_di" bpmnElement="angebot_prozess_anfrage_erhalten">
+        <dc:Bounds x="193" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="315" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_003hwv5_di" bpmnElement="SequenceFlow_003hwv5">
+        <di:waypoint x="229" y="290" />
+        <di:waypoint x="296" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1u84mvp_di" bpmnElement="angebot_prozess_angebot_aufgebraucht">
+        <dc:Bounds x="622" y="792" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="608" y="835" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1acofs7_di" bpmnElement="SequenceFlow_1acofs7">
+        <di:waypoint x="376" y="348" />
+        <di:waypoint x="376" y="430" />
+        <di:waypoint x="426" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0i6ivyq_di" bpmnElement="angebot_prozess_anfrage_schliessen">
+        <dc:Bounds x="426" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ozydx1_di" bpmnElement="angebot_prozess_ende_anfrage_geschlossen">
+        <dc:Bounds x="598" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="455" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0u2cwnp_di" bpmnElement="SequenceFlow_0u2cwnp">
+        <di:waypoint x="526" y="430" />
+        <di:waypoint x="598" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0uy0sy4_di" bpmnElement="angebot_prozess_angebot_storniert">
+        <dc:Bounds x="622" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="609" y="715" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_00nvr2x_di" bpmnElement="IntermediateThrowEvent_090015z">
+        <dc:Bounds x="358" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="382" y="346" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_04qglgh_di" bpmnElement="SubProcess_0iqe81n" isExpanded="true">
+        <dc:Bounds x="150" y="880" width="270" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_18s0o4m_di" bpmnElement="StartEvent_116jxdw">
+        <dc:Bounds x="190" y="962" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="176" y="1005" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vz00s5_di" bpmnElement="SequenceFlow_0vz00s5">
+        <di:waypoint x="226" y="980" />
+        <di:waypoint x="352" y="980" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1q7e8uv_di" bpmnElement="angebot_prozess_ende_rest_geaendert">
+        <dc:Bounds x="352" y="962" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="337" y="1005" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_18g0o1h_di" bpmnElement="SubProcess_0iswhsi" isExpanded="true">
+        <dc:Bounds x="460" y="880" width="360" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0g2ybbi_di" bpmnElement="StartEvent_0ez9dsm">
+        <dc:Bounds x="500" y="962" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="493" y="1005" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0u3a2gl_di" bpmnElement="SequenceFlow_0u3a2gl">
+        <di:waypoint x="536" y="980" />
+        <di:waypoint x="590" y="980" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0aa1scv_di" bpmnElement="angebot_prozess_ende_benachrichtigung_eingestellt">
+        <dc:Bounds x="752" y="962" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="728" y="1005" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mkqzvi_di" bpmnElement="SequenceFlow_0mkqzvi">
+        <di:waypoint x="690" y="980" />
+        <di:waypoint x="752" y="980" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1t0jvhq_di" bpmnElement="angebot_prozess_benachrichtigung_einstellen">
+        <dc:Bounds x="590" y="940" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0th3wr1_di" bpmnElement="SubProcess_1xqjn7h" isExpanded="true">
+        <dc:Bounds x="850" y="877" width="280" height="205" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0llyy4x_di" bpmnElement="StartEvent_0h4prhw">
+        <dc:Bounds x="890" y="979" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="867" y="1022" width="83" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_12xueig_di" bpmnElement="EndEvent_12xueig">
+        <dc:Bounds x="1042" y="979" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1019" y="1022" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ix6q3z_di" bpmnElement="SequenceFlow_0ix6q3z">
+        <di:waypoint x="926" y="997" />
+        <di:waypoint x="1042" y="997" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0c4eiu4_di" bpmnElement="TextAnnotation_0c4eiu4">
+        <dc:Bounds x="880" y="907" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1achcc4_di" bpmnElement="Association_1achcc4">
+        <di:waypoint x="913" y="980" />
+        <di:waypoint x="924" y="947" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bcogbi_di" bpmnElement="SequenceFlow_0bcogbi">
+        <di:waypoint x="320" y="348" />
+        <di:waypoint x="320" y="530" />
+        <di:waypoint x="426" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_15zb1ke_di" bpmnElement="angebot_prozess_ende_anfrage_storniert">
+        <dc:Bounds x="598" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="575" y="555" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1je3ffw_di" bpmnElement="SequenceFlow_1je3ffw">
+        <di:waypoint x="526" y="530" />
+        <di:waypoint x="598" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_0dbpgtl_di" bpmnElement="IntermediateThrowEvent_1ife00p">
+        <dc:Bounds x="302" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="329" y="346" width="41" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1opybfb_di" bpmnElement="angebot_prozess_anfrage_stornieren">
+        <dc:Bounds x="426" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_0fm3his_di" bpmnElement="angebot_prozess_anfrage_bearbeiten">
+        <dc:Bounds x="296" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
