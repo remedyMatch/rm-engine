@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/1.0" id="Definitions_1att3bb" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="3.7.2">
+  <decision id="Decision_1bvey2j" name="Karma-Zuordnung">
+    <extensionElements>
+      <biodi:bounds x="150" y="80" width="180" height="80" />
+    </extensionElements>
+    <decisionTable id="decisionTable_1" hitPolicy="FIRST">
+      <input id="input_1" label="Karma-Art">
+        <inputExpression id="inputExpression_1" typeRef="string" expressionLanguage="juel">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0nqox9s" label="LeistungenVollbracht">
+        <inputExpression id="LiteralExpression_0tzvzj0" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0n9wlzd">
+        <inputExpression id="LiteralExpression_0600qdr" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="output_1" label="Karma-Menge" typeRef="integer" />
+      <rule id="DecisionRule_0f9qs7n">
+        <description>z. B. 5. Transport des Nutzers</description>
+        <inputEntry id="UnaryTests_0mbtvlg">
+          <text>"transport"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06jeu82">
+          <text>5,10,15, 25, 50, 100, 200, 500, 1000, 2000, 5000, 10000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0hvm4ly">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0c3sncz">
+          <text>3</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0wjlw4p">
+        <description>Normaler Transport-Fall</description>
+        <inputEntry id="UnaryTests_1s6cfh9">
+          <text>"transport"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rzkoyk">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0s4pf2x">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0w9fhbb">
+          <text>2</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_10sr4pu">
+        <description>z. B. 5. Spende des Nutzers</description>
+        <inputEntry id="UnaryTests_1hka0ew">
+          <text>"spende"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vk8y2t">
+          <text>5,10,15, 25, 50, 100, 200, 500, 1000, 2000, 5000, 10000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xfkq2s">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1rji172">
+          <text>3</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_08bj1ts">
+        <description>Normaler Spenden-Fall</description>
+        <inputEntry id="UnaryTests_15cfcvx">
+          <text>"spende"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0622el7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1x6sv1n">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_10db3tx">
+          <text>2</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1d7luct">
+        <description>Nutzer registriert sich bei RemedyMatch</description>
+        <inputEntry id="UnaryTests_1727qcj">
+          <text>"registrierung"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ofsg94">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05892i5">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0thb5x2">
+          <text>1</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0jt3brx">
+        <description>Fuer Version 2 geplant</description>
+        <inputEntry id="UnaryTests_1rqjq6x">
+          <text>"profil_vervollstaendigen"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0mouxdm">
+          <text>&lt;=1</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0w8cuvx">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0xr45hi">
+          <text>1</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1o4y2ag">
+        <description>Fuer Version 2 geplant</description>
+        <inputEntry id="UnaryTests_0qpi3tu">
+          <text>"anwerben"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_078x2f4">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11x6410">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1xfcnku">
+          <text>1</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0p1ihc8">
+        <description>Abzug von Karma für nicht erbringen einer zugesagten Leistung</description>
+        <inputEntry id="UnaryTests_0bttc5u">
+          <text>"nicht_leistung"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ciu1q8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01ig99l">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_09y4u81">
+          <text>-1</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1wkzq4g" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.2" camunda:diagramRelationId="c6d111db-7481-4d1e-906a-087ed8e69b4f">
+  <bpmn:process id="gamification_prozess" isExecutable="true">
+    <bpmn:startEvent id="gamification_prozess_start" name="Gamifikation wird aufgerufen">
+      <bpmn:outgoing>Flow_1ufl4n8</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1fvwwmj" messageRef="Message_11kvz47" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1ufl4n8" sourceRef="gamification_prozess_start" targetRef="gamification_prozess_karma_zuordnung" />
+    <bpmn:businessRuleTask id="gamification_prozess_karma_zuordnung" name="Karma-Zuordnung" camunda:decisionRef="Decision_1bvey2j">
+      <bpmn:incoming>Flow_1ufl4n8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0whscis</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0whscis" sourceRef="gamification_prozess_karma_zuordnung" targetRef="gamification_prozess_karma_speichern" />
+    <bpmn:endEvent id="gamification_prozess_karma_vergeben" name="Karma-Punkte wurden vergeben">
+      <bpmn:incoming>Flow_1l9pti0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0x2ovju" sourceRef="gamification_prozess_karma_speichern" targetRef="gamification_prozess_badge_zuordnung" />
+    <bpmn:sequenceFlow id="Flow_16e61dt" sourceRef="gamification_prozess_badge_zuordnung" targetRef="Gateway_0apd4ha" />
+    <bpmn:businessRuleTask id="gamification_prozess_badge_zuordnung" name="Badge-Zuordnung" camunda:decisionRef="Decision_1jflvrd">
+      <bpmn:incoming>Flow_0x2ovju</bpmn:incoming>
+      <bpmn:outgoing>Flow_16e61dt</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_0apd4ha" name="Badge erreicht" default="Flow_1l9pti0">
+      <bpmn:incoming>Flow_16e61dt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l9pti0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qh4jtz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1l9pti0" name="nein" sourceRef="Gateway_0apd4ha" targetRef="gamification_prozess_karma_vergeben" />
+    <bpmn:serviceTask id="gamification_prozess_karma_speichern" name="Neue Karma-Punkte des Nutzers speichern" camunda:type="external" camunda:topic="gamification_prozess_karma_speichern">
+      <bpmn:incoming>Flow_0whscis</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x2ovju</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0qh4jtz" name="ja" sourceRef="Gateway_0apd4ha" targetRef="gamification_prozess_badge_versenden">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">1=2</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="gamification_prozess_badge_versenden" name="Badge an Nutzer versenden" camunda:type="external" camunda:topic="gamification_prozess_badge_versenden">
+      <bpmn:incoming>Flow_0qh4jtz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pglhss</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="gamification_prozess_badge_versendet" name="Karma-Prozess ist beendet">
+      <bpmn:incoming>Flow_0pglhss</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0pglhss" sourceRef="gamification_prozess_badge_versenden" targetRef="gamification_prozess_badge_versendet" />
+    <bpmn:textAnnotation id="TextAnnotation_01tidli">
+      <bpmn:text>Nutzer-ID;
+Karma-Art; AnzLeistungenVollbracht</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_14f5n25" sourceRef="gamification_prozess_start" targetRef="TextAnnotation_01tidli" />
+  </bpmn:process>
+  <bpmn:message id="Message_11kvz47" name="gamification_prozess_event_start" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="gamification_prozess">
+      <bpmndi:BPMNEdge id="Flow_0pglhss_di" bpmnElement="Flow_0pglhss">
+        <di:waypoint x="1160" y="125" />
+        <di:waypoint x="1272" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qh4jtz_di" bpmnElement="Flow_0qh4jtz">
+        <di:waypoint x="930" y="255" />
+        <di:waypoint x="930" y="125" />
+        <di:waypoint x="1060" y="125" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="941" y="187" width="8" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l9pti0_di" bpmnElement="Flow_1l9pti0">
+        <di:waypoint x="955" y="280" />
+        <di:waypoint x="1092" y="280" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1013" y="262" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16e61dt_di" bpmnElement="Flow_16e61dt">
+        <di:waypoint x="820" y="280" />
+        <di:waypoint x="905" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x2ovju_di" bpmnElement="Flow_0x2ovju">
+        <di:waypoint x="630" y="280" />
+        <di:waypoint x="720" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0whscis_di" bpmnElement="Flow_0whscis">
+        <di:waypoint x="440" y="280" />
+        <di:waypoint x="530" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ufl4n8_di" bpmnElement="Flow_1ufl4n8">
+        <di:waypoint x="218" y="280" />
+        <di:waypoint x="340" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0fbe4gt_di" bpmnElement="gamification_prozess_start">
+        <dc:Bounds x="182" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="305" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_090a1it_di" bpmnElement="gamification_prozess_karma_zuordnung">
+        <dc:Bounds x="340" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0970wt2_di" bpmnElement="gamification_prozess_karma_vergeben">
+        <dc:Bounds x="1092" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1068" y="305" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jqig3w_di" bpmnElement="gamification_prozess_badge_zuordnung">
+        <dc:Bounds x="720" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0apd4ha_di" bpmnElement="Gateway_0apd4ha" isMarkerVisible="true">
+        <dc:Bounds x="905" y="255" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="893" y="315" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_155sd8u_di" bpmnElement="gamification_prozess_karma_speichern">
+        <dc:Bounds x="530" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wo6g77_di" bpmnElement="gamification_prozess_badge_versenden">
+        <dc:Bounds x="1060" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1l7wuoo_di" bpmnElement="gamification_prozess_badge_versendet">
+        <dc:Bounds x="1272" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1253" y="150" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_01tidli_di" bpmnElement="TextAnnotation_01tidli">
+        <dc:Bounds x="180" y="100" width="180" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_14f5n25_di" bpmnElement="Association_14f5n25">
+        <di:waypoint x="207" y="264" />
+        <di:waypoint x="259" y="150" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

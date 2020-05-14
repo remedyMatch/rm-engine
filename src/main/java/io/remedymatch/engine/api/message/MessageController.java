@@ -24,7 +24,7 @@ public class MessageController {
 
 		boolean hasProzessInstanzId = StringUtils.isNotBlank(request.getProzessInstanzId());
 		if (!hasProzessInstanzId && (request.getVariablesEqual() == null || request.getVariablesEqual().isEmpty())) {
-			log.error("Mindestens eine der ProzessInstanzId und VariablesEqual müssen gesetzt werden");
+			log.error("Mindestens eine der ProzessInstanzId und VariablesEqual muessen gesetzt werden");
 			return ResponseEntity.badRequest().build();
 		}
 

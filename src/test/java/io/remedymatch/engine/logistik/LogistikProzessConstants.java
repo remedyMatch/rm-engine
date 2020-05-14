@@ -7,6 +7,6 @@ public class LogistikProzessConstants {
     public static final String MESSAGE_ABHOLUNG = "logistik_prozess_abholung";
     public static final String TASK_LIEFERUNG_ERHALTEN = "logisitk_prozess_lieferung_bestaetigen";
     public static final String TASK_ABHOLUNG_BESTAETIGEN = "logisitk_prozess_abholung_bestaetigen";
-    public static final String START_EVENT = "logisitk_prozess_match_erhalten";
+    public static final String EVENT_START = "logisitk_prozess_match_erhalten";
 
 }

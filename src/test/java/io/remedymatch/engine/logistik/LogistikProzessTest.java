@@ -1,11 +1,8 @@
 package io.remedymatch.engine.logistik;
 
 import lombok.val;
-import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.ProcessEngineRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.camunda.bpm.engine.test.*;
+import org.junit.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.remedymatch.engine.logistik.LogistikProzessConstants.*;
@@ -42,7 +39,7 @@ public class LogistikProzessTest {
     public void lieferungDurchSpender() {
         val lieferprozess = runtimeService().startProcessInstanceByKey(PROZESS_KEY);
         assertThat(lieferprozess).isActive();
-        assertThat(lieferprozess).isWaitingAt(START_EVENT);
+        assertThat(lieferprozess).isWaitingAt(EVENT_START);
 
         // Start Event abschließen
         execute(job());
@@ -69,7 +66,7 @@ public class LogistikProzessTest {
     public void abholungDurchEmpfaenger() {
         val lieferprozess = runtimeService().startProcessInstanceByKey(PROZESS_KEY);
         assertThat(lieferprozess).isActive();
-        assertThat(lieferprozess).isWaitingAt(START_EVENT);
+        assertThat(lieferprozess).isWaitingAt(EVENT_START);
 
         // Start Event abschließen
         execute(job());
