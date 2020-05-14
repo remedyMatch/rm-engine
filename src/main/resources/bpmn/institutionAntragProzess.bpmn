@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1gk02i2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:process id="institution_antrag_prozess" isExecutable="true">
+    <bpmn:startEvent id="institution_antrag_prozess_start" name="Antrag erhalten" camunda:asyncBefore="true">
+      <bpmn:outgoing>SequenceFlow_0hwtbn3</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0hwtbn3" sourceRef="institution_antrag_prozess_start" targetRef="institution_antrag_prozess_antrag_pruefen" />
+    <bpmn:userTask id="institution_antrag_prozess_antrag_pruefen" name="Antrag prüfen" camunda:candidateGroups="freigeber">
+      <bpmn:incoming>SequenceFlow_0hwtbn3</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0mubm9e</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_11hkgzt" name="Antrag in Ordnung?">
+      <bpmn:incoming>SequenceFlow_0mubm9e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16791hc</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_00p42b0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0mubm9e" sourceRef="institution_antrag_prozess_antrag_pruefen" targetRef="ExclusiveGateway_11hkgzt" />
+    <bpmn:sequenceFlow id="SequenceFlow_16791hc" sourceRef="ExclusiveGateway_11hkgzt" targetRef="institution_antrag_prozess_antrag_genehmigen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${antrag_angenommen}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="institution_antrag_prozess_inst_anlegen" name="Institution anlegen" camunda:type="external" camunda:topic="institution_antrag_prozess_inst_anlegen">
+      <bpmn:incoming>SequenceFlow_10pwvnp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04qrxy2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_00p42b0" sourceRef="ExclusiveGateway_11hkgzt" targetRef="institution_antrag_prozess_antrag_ablehnen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!antrag_angenommen}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="institution_antrag_prozess_antrag_ablehnen" name="Antrag ablehen" camunda:type="external" camunda:topic="institution_antrag_prozess_antrag_ablehen">
+      <bpmn:incoming>SequenceFlow_00p42b0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0woe9a2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="institution_antrag_prozess_antrag_angenommen" name="Antrag angenommen">
+      <bpmn:incoming>SequenceFlow_06nyx8i</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_04qrxy2" sourceRef="institution_antrag_prozess_inst_anlegen" targetRef="institution_antrag_prozess_inst_zuweisen" />
+    <bpmn:endEvent id="institution_antrag_prozess_antrag_abgelehnt" name="Antrag abgelehnt">
+      <bpmn:incoming>SequenceFlow_0woe9a2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0woe9a2" sourceRef="institution_antrag_prozess_antrag_ablehnen" targetRef="institution_antrag_prozess_antrag_abgelehnt" />
+    <bpmn:sequenceFlow id="SequenceFlow_10pwvnp" sourceRef="institution_antrag_prozess_antrag_genehmigen" targetRef="institution_antrag_prozess_inst_anlegen" />
+    <bpmn:serviceTask id="institution_antrag_prozess_antrag_genehmigen" name="Antrag genehmigen" camunda:type="external" camunda:topic="institution_antrag_prozess_antrag_genehmigen">
+      <bpmn:incoming>SequenceFlow_16791hc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_10pwvnp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_06nyx8i" sourceRef="institution_antrag_prozess_inst_zuweisen" targetRef="institution_antrag_prozess_antrag_angenommen" />
+    <bpmn:serviceTask id="institution_antrag_prozess_inst_zuweisen" name="Institution zuweisen" camunda:type="external" camunda:topic="institution_antrag_prozess_inst_zuweisen">
+      <bpmn:incoming>SequenceFlow_04qrxy2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06nyx8i</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="institution_antrag_prozess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="institution_antrag_prozess_start">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="202" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hwtbn3_di" bpmnElement="SequenceFlow_0hwtbn3">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="270" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1nevtnn_di" bpmnElement="institution_antrag_prozess_antrag_pruefen">
+        <dc:Bounds x="270" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_11hkgzt_di" bpmnElement="ExclusiveGateway_11hkgzt" isMarkerVisible="true">
+        <dc:Bounds x="425" y="152" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="425" y="116" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mubm9e_di" bpmnElement="SequenceFlow_0mubm9e">
+        <di:waypoint x="370" y="177" />
+        <di:waypoint x="425" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_16791hc_di" bpmnElement="SequenceFlow_16791hc">
+        <di:waypoint x="475" y="177" />
+        <di:waypoint x="540" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1iknw61_di" bpmnElement="institution_antrag_prozess_inst_anlegen">
+        <dc:Bounds x="700" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00p42b0_di" bpmnElement="SequenceFlow_00p42b0">
+        <di:waypoint x="450" y="202" />
+        <di:waypoint x="450" y="300" />
+        <di:waypoint x="540" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0q8i5px_di" bpmnElement="institution_antrag_prozess_antrag_ablehnen">
+        <dc:Bounds x="540" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0tifoof_di" bpmnElement="institution_antrag_prozess_antrag_angenommen">
+        <dc:Bounds x="1002" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="986" y="202" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04qrxy2_di" bpmnElement="SequenceFlow_04qrxy2">
+        <di:waypoint x="800" y="177" />
+        <di:waypoint x="850" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1lcysrv_di" bpmnElement="institution_antrag_prozess_antrag_abgelehnt">
+        <dc:Bounds x="712" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="688" y="325" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0woe9a2_di" bpmnElement="SequenceFlow_0woe9a2">
+        <di:waypoint x="640" y="300" />
+        <di:waypoint x="712" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_10pwvnp_di" bpmnElement="SequenceFlow_10pwvnp">
+        <di:waypoint x="640" y="177" />
+        <di:waypoint x="700" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_145lc5p_di" bpmnElement="institution_antrag_prozess_antrag_genehmigen">
+        <dc:Bounds x="540" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06nyx8i_di" bpmnElement="SequenceFlow_06nyx8i">
+        <di:waypoint x="950" y="177" />
+        <di:waypoint x="1002" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1auqhza_di" bpmnElement="institution_antrag_prozess_inst_zuweisen">
+        <dc:Bounds x="850" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
