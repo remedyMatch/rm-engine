@@ -46,10 +46,10 @@
       <bpmn:outgoing>SequenceFlow_1ayj7nf</bpmn:outgoing>
     </bpmn:receiveTask>
   </bpmn:process>
-  <bpmn:message id="Message_02nbucl" name="logistik_prozess_lieferung" />
-  <bpmn:message id="Message_1korer2" name="logistik_prozess_abholung" />
-  <bpmn:message id="Message_1e2mrfx" name="logistik_prozess_lieferung_bestätigt" />
-  <bpmn:message id="Message_13ct3zi" name="logistik_prozess_abholung_bestätigt" />
+  <bpmn:message id="Message_02nbucl" name="logistik_prozess_lieferung_message" />
+  <bpmn:message id="Message_1korer2" name="logistik_prozess_abholung_message" />
+  <bpmn:message id="Message_1e2mrfx" name="logistik_prozess_lieferung_bestaetigt_message" />
+  <bpmn:message id="Message_13ct3zi" name="logistik_prozess_abholung_bestaetigt_message" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="logistik_prozess">
       <bpmndi:BPMNEdge id="SequenceFlow_00mukp4_di" bpmnElement="SequenceFlow_00mukp4">

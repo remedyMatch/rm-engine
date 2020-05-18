@@ -43,9 +43,7 @@ public class LogistikProzessShould extends AbstractProcessEngineRuleTest {
         assertThat(lieferprozess).isWaitingFor(MESSAGE_LIEFERUNG, MESSAGE_ABHOLUNG);
         runtimeService().correlateMessage(MESSAGE_LIEFERUNG);
         assertThat(lieferprozess).isWaitingAt(TASK_LIEFERUNG_ERHALTEN);
-
-        // Empfaenger bestaetigt Lieferung -> Ende des Prozesses
-        complete(task());
+        runtimeService().correlateMessage(MESSAGE_LIEFERUNG_BESTAETIGEN);
         assertThat(lieferprozess).isEnded();
     }
 
@@ -70,9 +68,7 @@ public class LogistikProzessShould extends AbstractProcessEngineRuleTest {
         assertThat(lieferprozess).isWaitingFor(MESSAGE_LIEFERUNG, MESSAGE_ABHOLUNG);
         runtimeService().correlateMessage(MESSAGE_ABHOLUNG);
         assertThat(lieferprozess).isWaitingAt(TASK_ABHOLUNG_BESTAETIGEN);
-
-        // Empfaenger holt Ware ab -> Ende des Prozesses
-        complete(task());
+        runtimeService().correlateMessage(MESSAGE_ABHOLUNG_BESTAETIGEN);
         assertThat(lieferprozess).isEnded();
     }
 
