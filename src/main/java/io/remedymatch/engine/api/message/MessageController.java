@@ -21,7 +21,11 @@ public class MessageController {
     @PostMapping("/korrelieren")
     public ResponseEntity<Void> messageKorrelieren(final @RequestBody @Valid MessageKorrelierenRequest request) {
 
-        boolean hasBusinessKey = StringUtils.isNotBlank(request.getBusinesskey());
+        System.out.println("-------> " + request.getBusinessKey());
+        System.out.println("-------> " + request.getProzessKey());
+        System.out.println("-------> " + request.getMessageKey());
+
+        boolean hasBusinessKey = StringUtils.isNotBlank(request.getBusinessKey());
         if (!hasBusinessKey && (request.getLocalVariablesEqual() == null || request.getLocalVariablesEqual().isEmpty())) {
             log.error("Mindestens eine der BusinessKey und VariablesEqual müssen gesetzt werden");
             return ResponseEntity.badRequest().build();
@@ -31,7 +35,7 @@ public class MessageController {
 
         MessageCorrelationBuilder correlationBuilder = runtimeService.createMessageCorrelation(request.getMessageKey());
         if (hasBusinessKey) {
-            correlationBuilder.processInstanceBusinessKey(request.getBusinesskey());
+            correlationBuilder.processInstanceBusinessKey(request.getBusinessKey());
         }
         if (request.getLocalVariablesEqual() != null && !request.getLocalVariablesEqual().isEmpty()) {
             correlationBuilder.localVariablesEqual(request.getLocalVariablesEqual());
